@@ -7,12 +7,12 @@ class Map extends Component {
         super(props);
         this.state = {
             mouseover: null,
-            featureId: -1,
+            feature: null,
         };
     }
 
     componentDidMount() {
-        const zoomThreshold = 6;
+        const zoomThreshold = 7;
 
         // マップの生成
         mapboxgl.accessToken = 'pk.eyJ1IjoibHVuYXNreSIsImEiOiJjazZidGtid2UxNTd1M2tuNTN0cDBzZDMyIn0.8ci4ul7Dh1kg2g6sRfDYQw';
@@ -39,11 +39,18 @@ class Map extends Component {
             map.on('click', selectArea);
         });
 
-        let setName = (v) => {
+        // マウスオーバー時の名前を表示
+        let setMouseOver = (v) => {
             if (this.state.mouseover != v){
                 this.setState({mouseover: v});
             }
         };
+
+        // 都市選択時の表示
+        let clickCity = (v) => {
+            this.props.click(v);
+        }
+
         //-------------------------- map setting functions
         
         function mountLayer(layer){
@@ -122,13 +129,13 @@ class Map extends Component {
             map.getCanvas().style.cursor = (features.length) ? 'crosshair' : '';
         
             if(!features.length){
-                setName(null);
+                setMouseOver(null);
                 return;
             }
             var feature = features[0];
             var name_prop = (layer == 'city') ? 'name' : layer + 'Name';
             var name = feature.properties[name_prop];
-            setName(name);
+            setMouseOver(name);
         }
 
         function selectArea(e) {
@@ -140,16 +147,17 @@ class Map extends Component {
                 return;
             }
 
-            var code_prop = (layer == 'city') ? 'code' : layer + 'Code';
+            var code_prop = (layer === 'city') ? 'code' : layer + 'Code';
             var code = features[0].properties[code_prop];
             map.setFilter(layerId, ["==", code_prop, code]);
 
-            if (layer == 'pref'){
+            if (layer === 'pref'){
                 map.setFilter('selected-area-city', ["==", code_prop, code]);
             } else {
                 map.setFilter('selected-area-pref', ["==", code_prop, code]);
             }
-            console.log(features[0]);
+            clickCity(features[0].properties);
+            // console.log(features[0]);
         }
         
         this.map = map;
@@ -162,20 +170,26 @@ class Map extends Component {
     render() {
         return (
             <div>
-                <BottomCordinates name={this.state.mouseover} />
+                {/* <SelectCordinate prop={this.state.feature}/> */}
+                <HoverCordinate name={this.state.mouseover} />
                 <div className={'map'} ref={e => (this.container = e)} />
             </div>
         );
     }
 }
 
-function BottomCordinates(name){
+function HoverCordinate(name){
     if(!(name.name)) return <div></div>;
     return (
-        <div className='bottomInformation'>
+        <div className='hoverInformation'>
             <p>{name.name}</p>
         </div>
     );
+}
+
+function SelectCordinate(prop){
+    console.log(prop);
+    return (<div></div>);
 }
 
 export default Map;

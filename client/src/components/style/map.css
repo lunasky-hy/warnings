@@ -8,7 +8,7 @@
     cursor:default;
 }
 
-.bottomInformation {
+.hoverInformation {
     display: inline-block;
     position: absolute;
     margin: 12px auto;
