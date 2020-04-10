@@ -1,0 +1,12 @@
+.coodinate {
+    display: inline-block;
+    position: absolute;
+    margin-top: 12px;
+    margin-left: -48%;
+    background-color: #d1d1d1;
+    color: #292929;
+    z-index: 2 !important;
+    padding: 8px;
+    font-size: large;
+    /* font-weight: bold; */
+}

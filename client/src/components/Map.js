@@ -187,9 +187,4 @@ function HoverCordinate(name){
     );
 }
 
-function SelectCordinate(prop){
-    console.log(prop);
-    return (<div></div>);
-}
-
 export default Map;
