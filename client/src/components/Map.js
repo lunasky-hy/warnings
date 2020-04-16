@@ -41,7 +41,7 @@ class Map extends Component {
 
         // マウスオーバー時の名前を表示
         let setMouseOver = (v) => {
-            if (this.state.mouseover != v){
+            if (this.state.mouseover !== v){
                 this.setState({mouseover: v});
             }
         };
@@ -55,7 +55,7 @@ class Map extends Component {
         
         function mountLayer(layer){
             // Layer's item - pref > distlict > division > city
-            var source_layer = ((layer == 'city') ? '' : layer) + 'allgeojson';
+            var source_layer = ((layer === 'city') ? '' : layer) + 'allgeojson';
 
             map.addSource("vtile-" + layer, {
                 "type": "vector",
@@ -96,7 +96,7 @@ class Map extends Component {
                 warning:   "rgba(233, 84, 107, 0.4)",
                 emergency: "rgba(98, 68, 152, 0.4)"
             };
-            var source_layer = ((layer == 'city') ? '' : layer) + 'allgeojson';
+            var source_layer = ((layer === 'city') ? '' : layer) + 'allgeojson';
 
             var stops = [];
             Object.keys(data).forEach((code) => {
@@ -114,7 +114,7 @@ class Map extends Component {
                 "source-layer": source_layer,
                 "paint": {
                     "fill-color": {
-                        "property": (layer == 'city') ? 'code' : layer + 'Code',
+                        "property": (layer === 'city') ? 'code' : layer + 'Code',
                         "type": "categorical",
                         "stops": stops,
                     },
@@ -133,7 +133,7 @@ class Map extends Component {
                 return;
             }
             var feature = features[0];
-            var name_prop = (layer == 'city') ? 'name' : layer + 'Name';
+            var name_prop = (layer === 'city') ? 'name' : layer + 'Name';
             var name = feature.properties[name_prop];
             setMouseOver(name);
         }
