@@ -36,3 +36,17 @@
     transform: rotate(360deg);
   }
 }
+
+.canvas-body {
+  position:absolute; 
+  top:0; 
+  bottom:0; 
+  width:100%;
+}
+
+.canvas-menu {
+  background-color: #dfdfdf;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
