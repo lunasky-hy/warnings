@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import mapboxgl from 'mapbox-gl';
+import {get} from './Get.js';
 import './style/map.css';
 
 class Map extends Component {
@@ -37,6 +38,13 @@ class Map extends Component {
 
             map.on('mousemove', hoverArea);
             map.on('click', selectArea);
+
+            get("/api/warning/city").then(v => v.json()).then(v => {
+                renderWaringArea('city', v);
+            });
+            get("/api/warning/pref").then(v => v.json()).then(v => {
+                renderWaringArea('pref', v);
+            });
         });
 
         // マウスオーバー時の名前を表示
@@ -104,8 +112,6 @@ class Map extends Component {
                 if(!status) return;
                 stops.push([code, warningColor[status]]);
             });
-
-            console.log(stops)
 
             map.addLayer({
                 "id": "warning-are-" + layer,
