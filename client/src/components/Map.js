@@ -36,15 +36,15 @@ class Map extends Component {
             mountLayer("city");
             mountLayer("pref");
 
-            map.on('mousemove', hoverArea);
-            map.on('click', selectArea);
-
             get("/api/warning/city").then(v => v.json()).then(v => {
                 renderWaringArea('city', v);
             });
             get("/api/warning/pref").then(v => v.json()).then(v => {
                 renderWaringArea('pref', v);
             });
+
+            map.on('mousemove', hoverArea);
+            map.on('click', selectArea);
         });
 
         // マウスオーバー時の名前を表示
@@ -79,7 +79,7 @@ class Map extends Component {
                 "source": "vtile-" + layer,
                 "source-layer": source_layer,
                 "paint": {
-                    "fill-color": "rgba(55, 55, 55, 0.3)",
+                    "fill-color": "rgba(55, 55, 55, 0)",
                     "fill-outline-color": "rgba(113, 181, 153, 0.6)"
                 }
             });
@@ -100,9 +100,9 @@ class Map extends Component {
         function renderWaringArea(layer, data){
             var warningColor = {
                 none:      "rgba(255, 255, 255, 0)",
-                advisory:  "rgba(254, 242, 99, 0.4)",
-                warning:   "rgba(233, 84, 107, 0.4)",
-                emergency: "rgba(98, 68, 152, 0.4)"
+                advisory:  "rgba(254, 242, 99, 0.7)",
+                warning:   "rgba(233, 84, 107, 0.7)",
+                emergency: "rgba(98, 68, 152, 0.7)"
             };
             var source_layer = ((layer === 'city') ? '' : layer) + 'allgeojson';
 
