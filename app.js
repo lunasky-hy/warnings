@@ -27,6 +27,16 @@ app.get('/api/',function(req,res){
     res.json({"body": "hello"});
 });
 
+app.get('/api/warning/city', async (req, res) => {
+  var warning = fs.readFileSync("sample-data/warning/city.json");
+  res.json(await JSON.parse(warning));
+});
+
+app.get('/api/warning/pref', (req, res) => {
+  var warning = fs.readFileSync("sample-data/warning/pref.json");
+  res.json(JSON.parse(warning));
+});
+
 const path = require('path');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use((req, res) => {
