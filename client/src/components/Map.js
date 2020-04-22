@@ -13,14 +13,14 @@ class Map extends Component {
     }
 
     componentDidMount() {
-        const zoomThreshold = 7;
+        const zoomThreshold = 6;
 
         // マップの生成
         mapboxgl.accessToken = 'pk.eyJ1IjoibHVuYXNreSIsImEiOiJjazZidGtid2UxNTd1M2tuNTN0cDBzZDMyIn0.8ci4ul7Dh1kg2g6sRfDYQw';
         var map = new mapboxgl.Map({
             container: this.container,
             center: [136.6, 35],
-            minZoom: 3,
+            minZoom: 4,
             maxZoom: 10,
             zoom: 5,
             attributionControl: false,
@@ -33,14 +33,14 @@ class Map extends Component {
 
         // レイヤーの生成
         map.on('load', () => {
-            mountLayer("city");
             mountLayer("pref");
-
-            get("/api/warning/city").then(v => v.json()).then(v => {
-                renderWaringArea('city', v);
-            });
+            mountLayer("city");
+            
             get("/api/warning/pref").then(v => v.json()).then(v => {
                 renderWaringArea('pref', v);
+            });
+            get("/api/warning/city").then(v => v.json()).then(v => {
+                renderWaringArea('city', v);
             });
 
             map.on('mousemove', hoverArea);
@@ -67,20 +67,20 @@ class Map extends Component {
 
             map.addSource("vtile-" + layer, {
                 "type": "vector",
-                "minzoom": (layer === 'city') ? zoomThreshold : 3,
-                "maxzoom": 10,
+                "minzoom": (layer === 'city') ? zoomThreshold : 4,
+                // "maxzoom": (layer === 'pref') ? zoomThreshold : 10,
                 "tiles": ["https://weatherbox.github.io/warning-area-vt/" + layer + "/{z}/{x}/{y}.pbf"],
                 "attribution": '<a href="http://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v2_3.html" target="_blank">国土数値情報</a>'
             });
 
             map.addLayer({
-                "id": "warning-area-" + layer,
+                "id": "area-" + layer,
                 "type": "fill",
                 "source": "vtile-" + layer,
                 "source-layer": source_layer,
                 "paint": {
-                    "fill-color": "rgba(55, 55, 55, 0)",
-                    "fill-outline-color": "rgba(113, 181, 153, 0.6)"
+                    "fill-color": "rgba(55, 55, 55, 0.4)",
+                    "fill-outline-color": "rgba(113, 181, 153, 0.5)"
                 }
             });
 
@@ -91,18 +91,22 @@ class Map extends Component {
                 "source-layer": source_layer,
                 "paint": {
                     "fill-color": "rgba(255, 55, 55, 1)",
-                    "fill-outline-color": "rgba(113, 181, 153, 0.6)"
+                    "fill-outline-color": "rgba(244, 244, 244, 1)"
                 },
                 "filter": ["==", "code", ""],
             });
         }
         
         function renderWaringArea(layer, data){
+            if (!data) {
+                console.log("Error: does not get warning data.");
+                return;
+            }
             var warningColor = {
-                none:      "rgba(255, 255, 255, 0)",
-                advisory:  "rgba(254, 242, 99, 0.7)",
-                warning:   "rgba(233, 84, 107, 0.7)",
-                emergency: "rgba(98, 68, 152, 0.7)"
+                none:      "rgba(55, 55, 55, 1)",
+                advisory:  "rgba(254, 242, 99, 0.8)",
+                warning:   "rgba(233, 84, 107, 0.8)",
+                emergency: "rgba(98, 68, 152, 0.8)"
             };
             var source_layer = ((layer === 'city') ? '' : layer) + 'allgeojson';
 
@@ -114,7 +118,7 @@ class Map extends Component {
             });
 
             map.addLayer({
-                "id": "warning-are-" + layer,
+                "id": "warning-area-" + layer,
                 "type": "fill",
                 "source": "vtile-" + layer,
                 "source-layer": source_layer,
@@ -127,11 +131,13 @@ class Map extends Component {
                     "fill-outline-color": "rgba(123, 124, 125, 0.7)",
                 }
             });
+
+            map.moveLayer('selected-area-' + layer);
         }
 
         function hoverArea(e){
             var layer = (map.getZoom() <= zoomThreshold) ? "pref":"city";
-            var features = map.queryRenderedFeatures(e.point, {layers : ["warning-area-" + layer]});
+            var features = map.queryRenderedFeatures(e.point, {layers : ["area-" + layer]});
             map.getCanvas().style.cursor = (features.length) ? 'crosshair' : '';
         
             if(!features.length){
@@ -146,7 +152,7 @@ class Map extends Component {
 
         function selectArea(e) {
             var layer = (map.getZoom() <= zoomThreshold) ? "pref" : "city";
-            var features = map.queryRenderedFeatures(e.point, {layers : ["warning-area-" + layer]});
+            var features = map.queryRenderedFeatures(e.point, {layers : ["area-" + layer]});
             var layerId = 'selected-area-' + layer;
 
             if(!features.length){
