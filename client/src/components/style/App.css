@@ -50,3 +50,22 @@
   bottom: 0;
   width: 100%;
 }
+
+.canvas-back-icon {
+  display: inline-block;
+  position: absolute;
+  margin-top: 16px;
+  margin-left: -45%;
+  padding: 3px;
+  height: auto;
+  width: auto;
+  border: solid 2px navy;
+  border-radius: 50%;
+}
+
+.back-icon-circle {
+  display: inline-block;
+  position: absolute;
+  margin-top: 16px;
+  margin-left: -45%;
+}

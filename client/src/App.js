@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { OffCanvas, OffCanvasMenu, OffCanvasBody } from "react-offcanvas";
-import './App.css';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import './components/style/App.css';
 import Map from './components/Map.js';
 import Coodinate from './components/Coordinate.js';
 
@@ -48,6 +49,7 @@ class App extends Component{
           </OffCanvasBody>
 
           <OffCanvasMenu className={"canvas-menu"} width={700}>
+            <ArrowForwardIosIcon fontSize="large" onClick={()=>this.handleClick(false)} className={"canvas-back-icon"} />
             <Coodinate feature={this.state.feature} />
           </OffCanvasMenu>
         </OffCanvas>
