@@ -182,7 +182,6 @@ class Map extends Component {
     render() {
         return (
             <div>
-                {/* <SelectCordinate prop={this.state.feature}/> */}
                 <HoverCordinate name={this.state.mouseover} />
                 <div className={'map'} ref={e => (this.container = e)} />
             </div>

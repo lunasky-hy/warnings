@@ -26,7 +26,9 @@ class App extends Component{
   
   handleClick(doopen) {
     // toggles the menu opened state
-    this.setState({ isMenuOpened: doopen });
+    if (doopen !== this.state.isMenuOpened){
+      this.setState({ isMenuOpened: doopen });
+    }
   }
 
   render() {
@@ -46,6 +48,7 @@ class App extends Component{
           </OffCanvasBody>
 
           <OffCanvasMenu className={"canvas-menu"} width={700}>
+            <Coodinate feature={this.state.feature} />
           </OffCanvasMenu>
         </OffCanvas>
       </div>
