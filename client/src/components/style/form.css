@@ -1,0 +1,32 @@
+section {
+    overflow: scroll;
+    margin-top: 16px;
+    margin-left: 5px;
+    height: 95%;
+    width: 100%;
+    border: 1px solid #eee;
+    background-color: #eee;
+}
+
+form {
+    text-align: left;
+    padding-top: 16px;
+    padding-left: 10%;
+}
+
+.form-elements {
+    margin-top: 16px;
+    width: 80ch;
+}
+
+p.candidate {
+    margin-top: 6px;
+    text-align: left;
+}
+
+a.candidates:link{
+    color: blue;
+}
+a.candidates:hover {
+    color: red;
+}

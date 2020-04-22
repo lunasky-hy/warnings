@@ -4,6 +4,7 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import './components/style/App.css';
 import Map from './components/Map.js';
 import Coodinate from './components/Coordinate.js';
+import WarnTextForm from './components/Form.js';
 
 
 class App extends Component{
@@ -36,8 +37,8 @@ class App extends Component{
     return (
       <div className="App">
         <OffCanvas
-          width={600}
-          transitionDuration={300}
+          width={800}
+          transitionDuration={400}
           effect={"parallax"}
           isMenuOpened={this.state.isMenuOpened}
           position={"right"}
@@ -48,9 +49,10 @@ class App extends Component{
             <Map click={(v) => this.selectFeature(v)} />
           </OffCanvasBody>
 
-          <OffCanvasMenu className={"canvas-menu"} width={700}>
+          <OffCanvasMenu className={"canvas-menu"}>
             <ArrowForwardIosIcon fontSize="large" onClick={()=>this.handleClick(false)} className={"canvas-back-icon"} />
             <Coodinate feature={this.state.feature} />
+            <WarnTextForm feature={this.state.feature} />
           </OffCanvasMenu>
         </OffCanvas>
       </div>
