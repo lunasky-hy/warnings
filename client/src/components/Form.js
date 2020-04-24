@@ -19,22 +19,30 @@ export default class WarnTextForm extends Component{
     }
 
     dispCandidate(ft) {
-        if(!ft) return;
-        const names = ["name", "divisionName", "distlictName", "prefName"];
+        if(!ft) return [];
+        const names = ["city", "division", "distlict", "pref"];
         
         if(Object.keys(ft).length > 2){
             var list = names.map((elem) => {
-                return <a className="candidates" onClick={() => this._setArea(ft[elem])}>{ft[elem]} </a>
+                var name = elem === "city" ? "name" : elem + "Name";
+                var code = elem === "city" ? "code" : elem + "Code";
+                return {
+                    "name": elem ==="distlict"? ft["prefName"] + ft[name]: ft[name],
+                    "code": ft[code],
+                };
             });
             return list;
         }else{
-            return <a className="candidates" onClick={() => this._setArea(ft["prefName"])}>{ft["prefName"]} </a>
+            return [{"name" : ft["prefName"], "code": ft["prefCode"]}];
         }
     }
 
     _setArea(ft) {
-        if(ft !== this.state.area)
+        if(!ft) return;
+        if(ft !== this.state.area){
             this.setState({"area": ft});
+            this.props.changeSelect(ft.code);
+        }
     }
 
     _setValue(key, v) {
@@ -78,15 +86,13 @@ export default class WarnTextForm extends Component{
         return (
             <section>
                 <form onSubmit={() => 1} autoComplete="off">
-                    <TextField id="area" 
-                        required label="地域" 
-                        value={this.state.area} 
+                    <Autocomplete 
+                        options={candidate}
+                        getOptionLabel={(opt) => opt.name}
                         className="form-elements" 
-                        variant="outlined" 
-                        onChange={this._handleChangeArea.bind(this)}  
-                        onFocus={this._setFocus.bind(this)} 
+                        renderInput={(params) => <TextField {...params} label="地域" variant="outlined" />}
+                        onChange={(e, v) => this._setArea(v)}
                     />
-                    <p className="candidate">候補： {candidate}</p>
                     <div className="elements">
                         <TextField id="factor" 
                             required multiline label="要因" 

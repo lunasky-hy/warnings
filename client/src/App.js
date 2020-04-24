@@ -12,6 +12,7 @@ class App extends Component{
     super(props);
     this.state = { 
       "feature": null,
+      "code": "",
       "isMenuOpened": false,
     };
   }
@@ -24,6 +25,11 @@ class App extends Component{
     if (this.state.feature){
       this.handleClick(true);
     }
+  }
+
+  setCode(code) {
+    if(code !== this.state.code)
+      this.setState({"code": code});
   }
   
   handleClick(doopen) {
@@ -56,13 +62,13 @@ class App extends Component{
 
           <OffCanvasBody className={"canvas-body"}>
             <Coodinate feature={this.state.feature} />
-            <Map click={(v) => this.selectFeature(v)} />
+            <Map click={(v) => this.selectFeature(v)} code={this.state.code} />
           </OffCanvasBody>
 
           <OffCanvasMenu className={"canvas-menu"}>
             <ArrowForwardIosIcon fontSize="large" onClick={()=>this.handleClick(false)} className={"canvas-back-icon"} />
             <Coodinate feature={this.state.feature} />
-            <WarnTextForm feature={this.state.feature} />
+            <WarnTextForm feature={this.state.feature} changeSelect={this.setCode.bind(this)} />
           </OffCanvasMenu>
         </OffCanvas>
       </div>

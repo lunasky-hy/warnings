@@ -9,6 +9,7 @@ class Map extends Component {
         this.state = {
             mouseover: null,
             feature: null,
+            code: "",
         };
     }
 
@@ -33,6 +34,9 @@ class Map extends Component {
 
         // レイヤーの生成
         map.on('load', () => {
+            addSource("pref");
+            addSource("city");
+
             mountLayer("pref");
             mountLayer("city");
             
@@ -45,6 +49,11 @@ class Map extends Component {
 
             map.on('mousemove', hoverArea);
             map.on('click', selectArea);
+
+            addSource("distlict");
+            addSource("division");
+            
+             createSelectLayer();
         });
 
         // マウスオーバー時の名前を表示
@@ -60,18 +69,20 @@ class Map extends Component {
         }
 
         //-------------------------- map setting functions
-        
-        function mountLayer(layer){
-            // Layer's item - pref > distlict > division > city
-            var source_layer = ((layer === 'city') ? '' : layer) + 'allgeojson';
+
+        function addSource(layer){
 
             map.addSource("vtile-" + layer, {
                 "type": "vector",
                 "minzoom": (layer === 'city') ? zoomThreshold : 4,
-                // "maxzoom": (layer === 'pref') ? zoomThreshold : 10,
                 "tiles": ["https://weatherbox.github.io/warning-area-vt/" + layer + "/{z}/{x}/{y}.pbf"],
                 "attribution": '<a href="http://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v2_3.html" target="_blank">国土数値情報</a>'
             });
+        }
+        
+        function mountLayer(layer){
+            // Layer's item - pref > distlict > division > city
+            var source_layer = ((layer === 'city') ? '' : layer) + 'allgeojson';
 
             map.addLayer({
                 "id": "area-" + layer,
@@ -96,7 +107,7 @@ class Map extends Component {
                 "filter": ["==", "code", ""],
             });
         }
-        
+
         function renderWaringArea(layer, data){
             if (!data) {
                 console.log("Error: does not get warning data.");
@@ -171,12 +182,51 @@ class Map extends Component {
             clickCity(features[0].properties);
             // console.log(features[0]);
         }
+
+        function createSelectLayer(){
+            const layers = ["city", "division", "distlict", "pref"];
+    
+            layers.reverse().map((layer) => {
+                var source_layer = ((layer === 'city') ? '' : layer) + 'allgeojson';
+                map.addLayer({
+                    "id": "featured-area-" + layer,
+                    "type": "fill",
+                    "source": "vtile-" + layer,
+                    "source-layer": source_layer,
+                    "paint": {
+                        "fill-color": "rgba(255, 255, 255, 0.4)",
+                        "fill-outline-color": "red"
+                    },
+                    "filter": ["==", "code", ""],
+                });
+            });
+        }
         
         this.map = map;
     }
 
+    changeFeaturedArea(props) {
+        if(!props.code) return;
+        if(props.code === this.state.code) return;
+
+        console.log(props.code);
+        this.setState({"code": props.code});
+
+        const layers = ["city", "division", "distlict", "pref"];
+        layers.map((layer) => {
+            var layerId = "featured-area-" + layer;
+            var code_prop = (layer === 'city') ? 'code' : layer + 'Code';
+            this.map.setFilter(layerId, ["==", code_prop, props.code]);
+            this.map.moveLayer('featured-area-' + layer);
+        });
+    }
+
     componentWillUnmount() {
         this.map.remove();
+    }
+
+    componentWillReceiveProps(props){
+        this.changeFeaturedArea(props);
     }
 
     render() {
