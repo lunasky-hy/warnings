@@ -5,7 +5,7 @@ section {
     height: 95%;
     width: 100%;
     border: 1px solid #eee;
-    background-color: #eee;
+    background-color: #fff;
 }
 
 form {
@@ -14,14 +14,33 @@ form {
     padding-left: 10%;
 }
 
-.form-elements {
-    margin-top: 16px;
+.form-collapse {
     width: 80ch;
+    margin-bottom: 6px;
+}
+
+.form-panel {
+    padding-top: 0.5ch;
+    padding-bottom: 0.5ch;
+    padding-left: 1ch;
+}
+
+.form-elements {
+    width: 80ch;
+}
+
+li {
+    margin-bottom: 16px;
+}
+
+div.elements {
+    margin-bottom: 16px;
 }
 
 p.candidate {
     margin-top: 6px;
     text-align: left;
+    padding-left: 12px;
 }
 
 a.candidates:link{
@@ -29,4 +48,10 @@ a.candidates:link{
 }
 a.candidates:hover {
     color: red;
+}
+
+span.inline-block {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.5ch 1ch;
 }
