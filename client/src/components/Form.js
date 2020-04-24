@@ -55,8 +55,7 @@ export default class WarnTextForm extends Component{
     }
 
     _handleChangePeriod(event, v){
-        console.log(v);
-        this._setValue("period", v);
+        this._setValue("period", new Date(Date.parse(v)));
     }
 
     _setFocus(event) {
@@ -73,8 +72,6 @@ export default class WarnTextForm extends Component{
             this._setValue("predict", this.state.predict + "\n" + str);
         }
     }
-
-
  
     render(){
         const candidate = this.dispCandidate(this.props.feature);
@@ -141,10 +138,11 @@ export default class WarnTextForm extends Component{
                     <div className="elements">
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                             <KeyboardDatePicker 
+                                label="有効期間"
                                 variant="inline"
-                                format="yyyy-MM-dd"
+                                format="yyyy/MM/dd"
                                 margin="normal"
-                                value={this.state.value}
+                                value={this.state.period}
                                 onChange={this._handleChangePeriod.bind(this)}
                             />
                         </MuiPickersUtilsProvider>
