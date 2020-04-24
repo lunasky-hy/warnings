@@ -15,7 +15,7 @@ form {
 }
 
 .form-collapse {
-    width: 80ch;
+    width: 90%;
     margin-bottom: 6px;
 }
 
@@ -26,7 +26,7 @@ form {
 }
 
 .form-elements {
-    width: 80ch;
+    width: 90%;
 }
 
 li {

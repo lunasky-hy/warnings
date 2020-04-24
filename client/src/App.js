@@ -33,11 +33,21 @@ class App extends Component{
     }
   }
 
+  canvasSizeModuler() {
+    var sw = window.innerWidth;
+    if(sw >= 800){
+      return 800;
+    }
+    else{
+      return sw;
+    }
+  }
+
   render() {
     return (
       <div className="App">
         <OffCanvas
-          width={800}
+          width={this.canvasSizeModuler()}
           transitionDuration={400}
           effect={"parallax"}
           isMenuOpened={this.state.isMenuOpened}
