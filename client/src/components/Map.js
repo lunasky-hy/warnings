@@ -32,6 +32,8 @@ class Map extends Component {
         });
         map.touchZoomRotate.disableRotation();
 
+        var warning_data = {};
+
         // レイヤーの生成
         map.on('load', () => {
             addSource("pref");
@@ -64,7 +66,8 @@ class Map extends Component {
         };
 
         // 都市選択時の表示
-        let clickCity = (v) => {
+        let clickCity = (v, w) => {
+            console.log(w);
             this.props.click(v);
         }
 
@@ -120,6 +123,7 @@ class Map extends Component {
                 emergency: "rgba(98, 68, 152, 0.8)"
             };
             var source_layer = ((layer === 'city') ? '' : layer) + 'allgeojson';
+            warning_data[layer] = data;
 
             var stops = [];
             Object.keys(data).forEach((code) => {
@@ -179,8 +183,7 @@ class Map extends Component {
             } else {
                 map.setFilter('selected-area-pref', ["==", code_prop, code]);
             }
-            clickCity(features[0].properties);
-            // console.log(features[0]);
+            clickCity(features[0].properties, warning_data[layer][code]);
         }
 
         function createSelectLayer(){
