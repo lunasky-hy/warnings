@@ -89,6 +89,7 @@ export default class WarnTextForm extends Component{
                     <Autocomplete 
                         options={candidate}
                         getOptionLabel={(opt) => opt.name}
+                        getOptionSelected={(opt, val) => opt.name === val.name}
                         className="form-elements" 
                         renderInput={(params) => <TextField {...params} label="地域" variant="outlined" />}
                         onChange={(e, v) => this._setArea(v)}

@@ -17,6 +17,7 @@ export default function WarningLabel(props){
             }else if(w.lastIndexOf("注意報") !== -1){
                 return <p className="label advisory">{w}</p>;
             }
+            return null;
         });
         return <div className="label-area">{labels}</div>;
     }

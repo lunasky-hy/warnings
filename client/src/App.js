@@ -22,7 +22,6 @@ class App extends Component{
   selectFeature(feature, warn){
     if (JSON.stringify(this.state.feature) !== JSON.stringify(feature)){
       this.setState({ "feature": feature, "warn": warn });
-      console.log(feature)
     }
 
     if (this.state.feature){

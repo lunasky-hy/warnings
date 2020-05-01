@@ -104,7 +104,7 @@ class Map extends Component {
                 "source-layer": source_layer,
                 "paint": {
                     "fill-color": "rgba(255, 55, 55, 1)",
-                    "fill-outline-color": "rgba(244, 244, 244, 1)"
+                    "fill-outline-color": "rgba(244, 244, 244, 1)",
                 },
                 "filter": ["==", "code", ""],
             });
@@ -202,6 +202,7 @@ class Map extends Component {
                     },
                     "filter": ["==", "code", ""],
                 });
+                return null;
             });
         }
         
@@ -219,6 +220,7 @@ class Map extends Component {
             var code_prop = (layer === 'city') ? 'code' : layer + 'Code';
             this.map.setFilter(layerId, ["==", code_prop, props.code]);
             this.map.moveLayer('featured-area-' + layer);
+            return null;
         });
     }
 
@@ -226,7 +228,7 @@ class Map extends Component {
         this.map.remove();
     }
 
-    componentWillReceiveProps(props){
+    componentDidUpdate(props){
         this.changeFeaturedArea(props);
     }
 
