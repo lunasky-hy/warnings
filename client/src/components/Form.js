@@ -41,7 +41,7 @@ export default class WarnTextForm extends Component{
         if(!ft) return;
         if(ft !== this.state.area){
             this.setState({"area": ft});
-            this.props.changeSelect(ft.code);
+            this.props.changeSelect(ft.map(f => f.code));
         }
     }
 
@@ -86,14 +86,17 @@ export default class WarnTextForm extends Component{
         return (
             <section>
                 <form onSubmit={() => 1} autoComplete="off">
-                    <Autocomplete 
-                        options={candidate}
-                        getOptionLabel={(opt) => opt.name}
-                        getOptionSelected={(opt, val) => opt.name === val.name}
-                        className="form-elements" 
-                        renderInput={(params) => <TextField {...params} label="地域" variant="outlined" />}
-                        onChange={(e, v) => this._setArea(v)}
-                    />
+                    <div className="elements">
+                        <Autocomplete 
+                            multiple
+                            options={candidate}
+                            getOptionLabel={(opt) => opt.name}
+                            getOptionSelected={(opt, val) => opt.name === val.name}
+                            className="form-elements" 
+                            renderInput={(params) => <TextField {...params} label="地域" variant="outlined" />}
+                            onChange={(e, v) => this._setArea(v)}
+                        />
+                    </div>
                     <div className="elements">
                         <TextField id="factor" 
                             required multiline label="要因" 

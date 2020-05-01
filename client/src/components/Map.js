@@ -122,7 +122,6 @@ class Map extends Component {
                 emergency: "rgba(98, 68, 152, 0.8)"
             };
             warning_data[layer] = data[layer + 'list'];
-            console.log(data);
 
             var source_layer = ((layer === 'city') ? '' : layer) + 'allgeojson';
             
@@ -213,12 +212,13 @@ class Map extends Component {
         if(!props.code) return;
         if(props.code === this.state.code) return;
         this.setState({"code": props.code});
+        console.log(props.code);
 
         const layers = ["city", "division", "distlict", "pref"];
         layers.map((layer) => {
             var layerId = "featured-area-" + layer;
             var code_prop = (layer === 'city') ? 'code' : layer + 'Code';
-            this.map.setFilter(layerId, ["==", code_prop, props.code]);
+            this.map.setFilter(layerId, ["==", code_prop, props.code.length > 0 ? props.code[props.code.length - 1] : ""]);
             this.map.moveLayer('featured-area-' + layer);
             return null;
         });
