@@ -55,7 +55,7 @@ class Map extends Component {
             addSource("distlict");
             addSource("division");
             
-             createSelectLayer();
+            createSelectLayer();
         });
 
         // マウスオーバー時の名前を表示
@@ -86,16 +86,16 @@ class Map extends Component {
             // Layer's item - pref > distlict > division > city
             var source_layer = ((layer === 'city') ? '' : layer) + 'allgeojson';
 
-            map.addLayer({
-                "id": "area-" + layer,
-                "type": "fill",
-                "source": "vtile-" + layer,
-                "source-layer": source_layer,
-                "paint": {
-                    "fill-color": "rgba(55, 55, 55, 0.4)",
-                    "fill-outline-color": "rgba(113, 181, 153, 0.5)"
-                }
-            });
+            // map.addLayer({
+            //     "id": "area-" + layer,
+            //     "type": "fill",
+            //     "source": "vtile-" + layer,
+            //     "source-layer": source_layer,
+            //     "paint": {
+            //         "fill-color": "rgba(55, 55, 55, 0.4)",
+            //         "fill-outline-color": "rgba(113, 181, 153, 0.5)"
+            //     }
+            // });
 
             map.addLayer({
                 "id": "selected-area-" + layer,
@@ -125,7 +125,6 @@ class Map extends Component {
             console.log(data);
 
             var source_layer = ((layer === 'city') ? '' : layer) + 'allgeojson';
-            var code_prop = (layer == 'city') ? 'code' : layer + 'Code';
             
             var stops = [];
             Object.keys(data[layer + 'list']).forEach((code) => {
@@ -153,7 +152,7 @@ class Map extends Component {
 
         function hoverArea(e){
             var layer = (map.getZoom() <= zoomThreshold) ? "pref":"city";
-            var features = map.queryRenderedFeatures(e.point, {layers : ["area-" + layer]});
+            var features = map.queryRenderedFeatures(e.point, {layers : ["warning-area-" + layer]});
             map.getCanvas().style.cursor = (features.length) ? 'crosshair' : '';
         
             if(!features.length){
@@ -168,7 +167,7 @@ class Map extends Component {
 
         function selectArea(e) {
             var layer = (map.getZoom() <= zoomThreshold) ? "pref" : "city";
-            var features = map.queryRenderedFeatures(e.point, {layers : ["area-" + layer]});
+            var features = map.queryRenderedFeatures(e.point, {layers : ["warning-area-" + layer]});
             var layerId = 'selected-area-' + layer;
 
             if(!features.length){
