@@ -67,8 +67,7 @@ class Map extends Component {
 
         // 都市選択時の表示
         let clickCity = (v, w) => {
-            console.log(w);
-            this.props.click(v);
+            this.props.click(v, w);
         }
 
         //-------------------------- map setting functions
@@ -122,13 +121,15 @@ class Map extends Component {
                 warning:   "rgba(233, 84, 107, 0.8)",
                 emergency: "rgba(98, 68, 152, 0.8)"
             };
-            var source_layer = ((layer === 'city') ? '' : layer) + 'allgeojson';
-            warning_data[layer] = data;
+            warning_data[layer] = data[layer + 'list'];
+            console.log(data);
 
+            var source_layer = ((layer === 'city') ? '' : layer) + 'allgeojson';
+            var code_prop = (layer == 'city') ? 'code' : layer + 'Code';
+            
             var stops = [];
-            Object.keys(data).forEach((code) => {
-                var status = data[code].status;
-                if(!status) return;
+            Object.keys(data[layer + 'list']).forEach((code) => {
+                var status = data[layer + 'list'][code].status;
                 stops.push([code, warningColor[status]]);
             });
 
@@ -211,8 +212,6 @@ class Map extends Component {
     changeFeaturedArea(props) {
         if(!props.code) return;
         if(props.code === this.state.code) return;
-
-        console.log(props.code);
         this.setState({"code": props.code});
 
         const layers = ["city", "division", "distlict", "pref"];

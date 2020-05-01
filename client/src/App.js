@@ -5,6 +5,7 @@ import './components/style/App.css';
 import Map from './components/Map.js';
 import Coodinate from './components/Coordinate.js';
 import WarnTextForm from './components/Form.js';
+import WarningLabel from './components/WarningLabel.js';
 
 
 class App extends Component{
@@ -12,14 +13,16 @@ class App extends Component{
     super(props);
     this.state = { 
       "feature": null,
+      "warn": null,
       "code": "",
       "isMenuOpened": false,
     };
   }
 
-  selectFeature(feature){
+  selectFeature(feature, warn){
     if (JSON.stringify(this.state.feature) !== JSON.stringify(feature)){
-      this.setState({ "feature": feature });
+      this.setState({ "feature": feature, "warn": warn });
+      console.log(feature)
     }
 
     if (this.state.feature){
@@ -62,12 +65,13 @@ class App extends Component{
 
           <OffCanvasBody className={"canvas-body"}>
             <Coodinate feature={this.state.feature} />
-            <Map click={(v) => this.selectFeature(v)} code={this.state.code} />
+            <Map click={(v, w) => this.selectFeature(v, w)} code={this.state.code} />
           </OffCanvasBody>
 
           <OffCanvasMenu className={"canvas-menu"}>
             <ArrowForwardIosIcon fontSize="large" onClick={()=>this.handleClick(false)} className={"canvas-back-icon"} />
             <Coodinate feature={this.state.feature} />
+            <WarningLabel warnings={this.state.warn} />
             <WarnTextForm feature={this.state.feature} changeSelect={this.setCode.bind(this)} />
           </OffCanvasMenu>
         </OffCanvas>
