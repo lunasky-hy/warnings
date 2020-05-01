@@ -30,11 +30,13 @@ app.get('/api/',function(req,res){
 app.get('/api/warning/city', async (req, res) => {
   var warning = fs.readFileSync("sample-data/warning/city.json");
   res.json(await JSON.parse(warning));
+  //https://s3-ap-northeast-1.amazonaws.com/vector-tile/warning/city.json
 });
 
 app.get('/api/warning/pref', (req, res) => {
   var warning = fs.readFileSync("sample-data/warning/pref.json");
   res.json(JSON.parse(warning));
+  // https://s3-ap-northeast-1.amazonaws.com/vector-tile/warning/pref.json
 });
 
 const path = require('path');
