@@ -158,7 +158,7 @@ export default class WarnTextForm extends Component{
                         </MuiPickersUtilsProvider>
                     </div>
                 </form>
-                <button onClick={() => console.log(this.state)}>console.log</button>
+                {/* <button onClick={() => console.log(this.state)}>console.log</button> */}
             </section>
         );
     }
