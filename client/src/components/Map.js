@@ -14,7 +14,7 @@ class Map extends Component {
     }
 
     componentDidMount() {
-        const zoomThreshold = 6;
+        const zoomThreshold = 8;
 
         // マップの生成
         mapboxgl.accessToken = 'pk.eyJ1IjoibHVuYXNreSIsImEiOiJjazZidGtid2UxNTd1M2tuNTN0cDBzZDMyIn0.8ci4ul7Dh1kg2g6sRfDYQw';
@@ -52,8 +52,8 @@ class Map extends Component {
             map.on('mousemove', hoverArea);
             map.on('click', selectArea);
 
-            addSource("distlict");
-            addSource("division");
+            // addSource("distlict");
+            // addSource("division");
             
             createSelectLayer();
         });
@@ -117,9 +117,9 @@ class Map extends Component {
             }
             var warningColor = {
                 none:      "rgba(55, 55, 55, 1)",
-                advisory:  "rgba(254, 242, 99, 0.8)",
-                warning:   "rgba(233, 84, 107, 0.8)",
-                emergency: "rgba(98, 68, 152, 0.8)"
+                advisory:  "rgba(254, 242, 99, 1)",
+                warning:   "rgba(233, 84, 107, 1)",
+                emergency: "rgba(98, 68, 152, 1)"
             };
             warning_data[layer] = data[layer + 'list'];
 
@@ -150,7 +150,7 @@ class Map extends Component {
         }
 
         function hoverArea(e){
-            var layer = (map.getZoom() <= zoomThreshold) ? "pref":"city";
+            var layer = (map.getZoom() < zoomThreshold) ? "pref":"city";
             var features = map.queryRenderedFeatures(e.point, {layers : ["warning-area-" + layer]});
             map.getCanvas().style.cursor = (features.length) ? 'crosshair' : '';
         
@@ -165,7 +165,7 @@ class Map extends Component {
         }
 
         function selectArea(e) {
-            var layer = (map.getZoom() <= zoomThreshold) ? "pref" : "city";
+            var layer = (map.getZoom() < zoomThreshold) ? "pref" : "city";
             var features = map.queryRenderedFeatures(e.point, {layers : ["warning-area-" + layer]});
             var layerId = 'selected-area-' + layer;
 
@@ -186,23 +186,35 @@ class Map extends Component {
         }
 
         function createSelectLayer(){
-            const layers = ["city", "division", "distlict", "pref"];
-    
-            layers.reverse().map((layer) => {
-                var source_layer = ((layer === 'city') ? '' : layer) + 'allgeojson';
-                map.addLayer({
-                    "id": "featured-area-" + layer,
-                    "type": "fill",
-                    "source": "vtile-" + layer,
-                    "source-layer": source_layer,
-                    "paint": {
-                        "fill-color": "rgba(255, 255, 255, 0.4)",
-                        "fill-outline-color": "red"
-                    },
-                    "filter": ["==", "code", ""],
-                });
-                return null;
+            // const layers = ["city", "division", "distlict", "pref"];
+            const layers = "pref";
+
+            map.addLayer({
+                "id": "featured-area-pref",
+                "type": "fill",
+                "source": "vtile-pref",
+                "source-layer": "prefallgeojson",
+                "paint": {
+                    "fill-color": "rgba(250,250,250,1)",
+                    "fill-outline-color": "rgba(250, 30, 30, 1)",
+                },
+                "filter": ["==", "code", ""],
             });
+            // layers.reverse().map((layer) => {
+            //     var source_layer = ((layer === 'city') ? '' : layer) + 'allgeojson';
+            //     map.addLayer({
+            //         "id": "featured-area-" + layer,
+            //         "type": "fill",
+            //         "source": "vtile-" + layer,
+            //         "source-layer": source_layer,
+            //         "paint": {
+            //             "fill-color": "rgba(250,250,250,1)",
+            //             "fill-outline-color": "rgba(250, 30, 30, 1)",
+            //         },
+            //         "filter": ["==", "code", ""],
+            //     });
+            //     return null;
+            // });
         }
         
         this.map = map;
@@ -214,14 +226,16 @@ class Map extends Component {
         this.setState({"code": props.code});
         console.log(props.code);
 
-        const layers = ["city", "division", "distlict", "pref"];
-        layers.map((layer) => {
-            var layerId = "featured-area-" + layer;
-            var code_prop = (layer === 'city') ? 'code' : layer + 'Code';
-            this.map.setFilter(layerId, ["==", code_prop, props.code.length > 0 ? props.code[props.code.length - 1] : ""]);
-            this.map.moveLayer('featured-area-' + layer);
-            return null;
-        });
+        var layerId = "featured-area-pref";
+        var code_prop = 'prefCode';
+
+        var filter = ["any", ["==", code_prop, ""]];
+        props.code.map(c => {
+            filter.push(["==", code_prop, c]);
+        })
+
+        this.map.setFilter(layerId, filter);
+        this.map.moveLayer('featured-area-pref');
     }
 
     componentWillUnmount() {

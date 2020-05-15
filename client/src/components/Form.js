@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
+import {get} from './Get.js';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button'
 import DateFnsUtils from '@date-io/date-fns';
 import {KeyboardDatePicker, MuiPickersUtilsProvider} from '@material-ui/pickers/';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import './style/form.css';
 import { Collapse, Paper } from '@material-ui/core';
+import './style/form.css';
 
 export default class WarnTextForm extends Component{
     constructor(props){
@@ -83,6 +84,7 @@ export default class WarnTextForm extends Component{
  
     render(){
         const candidate = this.dispCandidate(this.props.feature);
+        get('/api/templete/causes').then(v => v.json()).then(data => console.log(data));
         return (
             <section>
                 <form onSubmit={() => 1} autoComplete="off">
