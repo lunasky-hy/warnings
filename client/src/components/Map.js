@@ -200,7 +200,7 @@ class Map extends Component {
                 },
                 "filter": ["==", "code", ""],
             });
-            // layers.reverse().map((layer) => {
+            {// layers.reverse().map((layer) => {
             //     var source_layer = ((layer === 'city') ? '' : layer) + 'allgeojson';
             //     map.addLayer({
             //         "id": "featured-area-" + layer,
@@ -215,6 +215,7 @@ class Map extends Component {
             //     });
             //     return null;
             // });
+            };
         }
         
         this.map = map;

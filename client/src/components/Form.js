@@ -159,6 +159,9 @@ export default class WarnTextForm extends Component{
                             />
                         </MuiPickersUtilsProvider>
                     </div>
+                    <div className="elements">
+                        <Button type="submit">解説用画像の選択へ</Button>
+                    </div>
                 </form>
                 {/* <button onClick={() => console.log(this.state)}>console.log</button> */}
             </section>
