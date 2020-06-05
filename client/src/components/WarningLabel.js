@@ -9,13 +9,13 @@ export default function WarningLabel(props){
         return (<div className="label-area"><p className="label default">発表無し</p></div>);
     }
     else{
-        var labels = props.warnings.warnings.map(w => {
+        var labels = props.warnings.warnings.map((w, i) => {
             if(w.lastIndexOf("特別警報") !== -1){
-                return <p className="label emergency">{w}</p>;
+                return <p className="label emergency" key={i}>{w}</p>;
             }else if(w.lastIndexOf("警報") !== -1){
-                return <p className="label warning">{w}</p>;
+                return <p className="label warning" key={i}>{w}</p>;
             }else if(w.lastIndexOf("注意報") !== -1){
-                return <p className="label advisory">{w}</p>;
+                return <p className="label advisory" key={i}>{w}</p>;
             }
             return null;
         });

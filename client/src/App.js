@@ -4,8 +4,8 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import './components/style/App.css';
 import Map from './components/Map.js';
 import Coodinate from './components/Coordinate.js';
-import WarnTextForm from './components/Form.js';
 import WarningLabel from './components/WarningLabel.js';
+import WarnTextForm from './components/Form.js';
 
 
 class App extends Component{
