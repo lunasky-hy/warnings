@@ -7,6 +7,10 @@
     grid-template-columns: 12rem repeat(8, 1fr);
 }
 
+.arealabel {
+    border-bottom: 2px solid black;
+}
+
 .datetime {
     display: flex;
     justify-content: center;

@@ -16,25 +16,44 @@ export default class WarnPeriod extends Component {
         }
     }
 
-    CreateTimes(){
+    CreateDays(){
         // var date_colums = <div className="item head"></div>
-        var time_colums = [<div className="datetime head" key="time">時刻</div>];
-
-        // var date = this.state.start.date;
+        var day_colum = [<div className="datetime head" key="day">日付</div>];
+        var day = this.state.start.date;
         var term = this.state.start.term;
+        var columNum = 2;
+
+        for(var i = 0; i < 8; i += 1){
+            term += 1;
+            if(term <= 8){
+                continue;
+            }
+            day_colum.push(<div className="datetime middle" style={{"grid-column": columNum +"/"+ (i+2)}} key={day}>{day}日</div>);
+            term = 0;
+            day += 1;
+            columNum = i + 2;
+        }
+        day_colum.push(<div className="datetime middle end" style={{"grid-column": columNum +"/"+ 10}} key={day}>{day}日</div>);
+        return <div className="grid">{day_colum}</div>
+    }
+
+    CreateTimes(){
+        var time_colums = [<div className="datetime head" key="time">時間</div>];
+        var term = this.state.start.term;
+
+        var columNum = 2;
 
         for(var i = 0; i < 8; i += 1){
             if(term > 7){
                 term = 0;
-                // date += 1;
             }
             if(i === 7)
-                time_colums.push(<div className="datetime end" key={i}>{term * 3} - </div>);
+                time_colums.push(<div className="datetime end" key={i}>{term * 3} - {(term + 1) * 3}</div>);
             else
-                time_colums.push(<div className="datetime middle" key={i}>{term * 3} - </div>);
+                time_colums.push(<div className="datetime middle" key={i}>{term * 3} - {(term + 1) * 3}</div>);
             term += 1;
         }
-        return time_colums;
+        return <div className="grid">{time_colums}</div>;
     }
 
     whichTypeWarning(w){
@@ -131,13 +150,14 @@ export default class WarnPeriod extends Component {
     }
 
     render(){
+        var days = !data.Kind.length ? <div></div> : this.CreateDays()
         var times = !data.Kind.length ? <div>発令無し</div> : this.CreateTimes()
         var types = data.Kind.map(k => this.CreatePeriod(k));
         return (
             <div className="outline">
-                <div className="grid">
-                    {times}
-                </div>
+                <div className="arealabel">{data.Area.Name} (code: {data.Area.Code})</div>
+                {days}
+                {times}
                 {types}
             </div>
         );
