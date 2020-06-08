@@ -37,17 +37,17 @@ class Map extends Component {
         // レイヤーの生成
         map.on('load', () => {
             addSource("pref");
-            addSource("city");
+            // addSource("city");
 
             mountLayer("pref");
-            mountLayer("city");
+            // mountLayer("city");
             
             get("/api/warning/pref").then(v => v.json()).then(v => {
                 renderWaringArea('pref', v);
             });
-            get("/api/warning/city").then(v => v.json()).then(v => {
-                renderWaringArea('city', v);
-            });
+            // get("/api/warning/city").then(v => v.json()).then(v => {
+            //     renderWaringArea('city', v);
+            // });
 
             map.on('mousemove', hoverArea);
             map.on('click', selectArea);
