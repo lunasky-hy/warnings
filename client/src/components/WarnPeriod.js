@@ -1,27 +1,27 @@
 import React, { Component } from 'react';
 import './style/period.css';
+import {get} from './Get.js';
 
 export default class WarnPeriod extends Component {
     constructor(props){
         super(props);
         this.state = {
-            code: null,
             start: {        // 情報の発表タイミング
-                date: 0,
-                term: 0     // 0:00-0, 3:00-1, 6:00:2, 9:3, 12:4, 15:5, 18:6, 21:7
-            },
-            end: {          // startから8ターム、24時間後まで
-                date: 0,
-                term: 0
-            }
+                date: 15,
+                term: 6     // 0:00-0, 3:00-1, 6:00:2, 9:3, 12:4, 15:5, 18:6, 21:7
+            },              // startから8ターム、24時間後まで
+            data: null,     //data,
+            code: null,
         }
+        this.callflag = false;
     }
 
-    setCode(){
-        console.log(this.props);
-        // this.setState({
-        //     "code": this.props.code,
-        // });
+    setCode(code){
+        if(!code || code === this.state.code)
+            return;
+        this.setState({
+            "code": code,
+        });
     }
 
     CreateDays(){
@@ -156,19 +156,38 @@ export default class WarnPeriod extends Component {
     }
 
     render(){
-        if(!this.state.code){
-            console.log(1)
+        if(!this.props.code){
+            console.log("area none");
             return <div>地域を選択</div>;
         }
-        console.log(2)
-        return <div>{this.props}</div>;
 
-        var days = !data.Kind.length ? <div></div> : this.CreateDays()
-        var times = !data.Kind.length ? <div>発令無し</div> : this.CreateTimes()
-        var types = data.Kind.map(k => this.CreatePeriod(k));
+        console.log(this.props.code);
+        var code = this.props.code.prefCode;
+        if(!this.callflag && code !== this.state.code){
+            this.callflag = true
+            get("/api/period/" + code).then(res => res.json()).then(d => {
+                console.log(d);
+                this.setState({data: d[3]["Item"][0], code: this.props.code.prefCode})
+            }).catch(err => {
+                console.log(err);
+            }).finally(() => {
+                this.callflag = false;
+            });
+        }
+
+        // waiting for get data
+        if(!this.state.data || !(!this.state.data.err)){    
+            return <div>Wait a moment.....</div>;
+        }
+
+        // can get data
+        console.log(this.state.data)
+        var days = !this.state.data.Kind.length ? <div></div> : this.CreateDays()
+        var times = !this.state.data.Kind.length ? <div>発令無し</div> : this.CreateTimes()
+        var types = this.state.data.Kind.map(k => this.CreatePeriod(k));
         return (
             <div className="outline">
-                <div className="arealabel">{data.Area.Name} (code: {data.Area.Code})</div>
+                <div className="arealabel">{this.state.data.Area.Name} (code: {this.state.data.Area.Code})</div>
                 {days}
                 {times}
                 {types}
@@ -177,234 +196,234 @@ export default class WarnPeriod extends Component {
     }
 }
 
-var data = {
-        "Kind": [
-            {
-                "Name":"大雨注意報",
-                "Code":"10",
-                "Status":"継続",
-                "Attention":{
-                    "Note":"土砂災害注意"
-                },
-                "WarningNotice":{
-                    "StartTime":{
-                        "Date":"１６日",
-                        "Term":"朝"
-                    },
-                    "Note":"大雨警報（土砂災害）に切り替える可能性が高い"
-                },
-                "Property":{
-                    "Type":"土砂災害",
-                    "WarningPeriod":{
-                        "StartTime":{
-                            "Date":"１６日",
-                            "Term":"朝"
-                        },
-                        "EndTime":{
-                            "Date":"１６日",
-                            "Term":"昼前"
-                        }
-                    },
-                    "AdvisoryPeriod":{
-                        "EndTime":{
-                            "Date":"１６日",
-                            "Term":"昼過ぎ"
-                        }
-                    }
-                }
-            },
-            {
-                "Name":"洪水注意報",
-                "Code":"18",
-                "Status":"継続",
-                "Property":{
-                    "Type":"洪水",
-                    "AdvisoryPeriod":{
-                        "EndTime":{
-                            "Date":"１６日",
-                            "Term":"昼前"
-                        }
-                    }
-                }
-            },
-            {
-                "Name":"雷注意報",
-                "Code":"14",
-                "Status":"継続",
-                "Addition":{
-                    "Note":"突風"
-                },
-                "Property":{
-                    "Type":"雷",
-                    "AdvisoryPeriod":{
-                        "EndTime":{
-                            "Date":"１６日",
-                            "Term":"昼過ぎ"
-                        }
-                    }
-                }
-            },
-            {
-                "Name":"強風注意報",
-                "Code":"15",
-                "Status":"継続",
-                "Property":{
-                    "Type":"風",
-                    "AdvisoryPeriod":{
-                        "ZoneTime":{
-                            "Date":"１５日",
-                            "Term":"夜のはじめ頃"
-                        }
-                    },
-                    "WindDirectionPart":{
-                        "Base":{
-                            "WindDirection":{
-                                "value":"南",
-                                "description":"南の風",
-                                "type":"風向",
-                                "unit":"８方位漢字"
-                            }
-                        }
-                    },
-                    "WindSpeedPart":{
-                        "Base":{
-                            "Local":{
-                                "AreaName":"外海",
-                                "WindSpeed":{
-                                    "value":"10",
-                                    "description":"１０メートル",
-                                    "type":"最大風速",
-                                    "unit":"m/s"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                "Name":"波浪注意報",
-                "Code":"16",
-                "Status":"継続",
-                "Property":{
-                    "Type":"波",
-                    "AdvisoryPeriod":{
-                        "ZoneTime":{
-                            "Date":"１５日",
-                            "Term":"夜のはじめ頃"
-                        }
-                    },
-                    "WaveHeightPart":{
-                        "Base":{
-                            "Local":{
-                                "AreaName":"外海",
-                                "WaveHeight":{
-                                    "value":"2.5",
-                                    "description":"２．５メートル",
-                                    "type":"波高",
-                                    "unit":"m"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        ],
-        "Area":{
-            "Name":"佐世保市（宇久地域を除く）",
-            "Code":"4220201"
-        },
-        "ChangeStatus":"警報・注意報種別に変化無、量的予想事項等に変化有"
-    };
-var data2 = {
-    "Kind":[{
-    "Name":"大雨注意報",
-    "Code":"10",
-    "Status":"発表",
-    "Attention":{
-    "Note":"土砂災害注意"
-    },
-    "Property":{
-    "Type":"土砂災害",
-    "AdvisoryPeriod":{
-    "EndTime":{
-    "Date":"１５日",
-    "Term":"夜遅く"
-    }
-    }
-    }
-    },
-    {
-    "Name":"雷注意報",
-    "Code":"14",
-    "Status":"継続",
-    "Addition":{
-    "Note":"突風"
-    },
-    "Property":{
-    "Type":"雷",
-    "AdvisoryPeriod":{
-    "EndTime":{
-    "Date":"１６日",
-    "Term":"昼前"
-    }
-    }
-    }
-    },
-    {
-        "Name":"強風注意報",
-        "Code":"15",
-        "Status":"継続",
-        "Property":{
-            "Type":"風",
-            "AdvisoryPeriod":{
-                "EndTime":{
-                    "Date":"１６日",
-                    "Term":"未明"
-                }
-            },
-            "PeakTime":{
-                "Date":"１５日",
-                "Term":"夜のはじめ頃"
-            },
-            "WindDirectionPart":{
-                "Base":{
-                    "WindDirection":{
-                        "value":"南",
-                        "description":"南の風",
-                        "type":"風向",
-                        "unit":"８方位漢字"
-                    }
-                }
-            },
-            "WindSpeedPart":{
-                "Base":{
-                    "Local":[
-                        {
-                            "AreaName":"玄界灘",
-                            "WindSpeed":{
-                                "value":"14",
-                                "description":"１４メートル",
-                                "type":"最大風速",
-                                "unit":"m/s"
-                            }
-                        },
-                        {
-                            "AreaName":"沖ノ島周辺",
-                                "WindSpeed":{
-                                    "value":"14",
-                                    "description":"１４メートル",
-                                    "type":"最大風速",
-                                    "unit":"m/s"
-                            }
-                        }
-                    ]
-                }
-            }
-        }
-    }],
-    "Area":{
-        "Name":"福岡市",
-        "Code":"4013000"
-    },
-    "ChangeStatus":"警報・注意報種別に変化有"
-}
+// var data = {
+//         "Kind": [
+//             {
+//                 "Name":"大雨注意報",
+//                 "Code":"10",
+//                 "Status":"継続",
+//                 "Attention":{
+//                     "Note":"土砂災害注意"
+//                 },
+//                 "WarningNotice":{
+//                     "StartTime":{
+//                         "Date":"１６日",
+//                         "Term":"朝"
+//                     },
+//                     "Note":"大雨警報（土砂災害）に切り替える可能性が高い"
+//                 },
+//                 "Property":{
+//                     "Type":"土砂災害",
+//                     "WarningPeriod":{
+//                         "StartTime":{
+//                             "Date":"１６日",
+//                             "Term":"朝"
+//                         },
+//                         "EndTime":{
+//                             "Date":"１６日",
+//                             "Term":"昼前"
+//                         }
+//                     },
+//                     "AdvisoryPeriod":{
+//                         "EndTime":{
+//                             "Date":"１６日",
+//                             "Term":"昼過ぎ"
+//                         }
+//                     }
+//                 }
+//             },
+//             {
+//                 "Name":"洪水注意報",
+//                 "Code":"18",
+//                 "Status":"継続",
+//                 "Property":{
+//                     "Type":"洪水",
+//                     "AdvisoryPeriod":{
+//                         "EndTime":{
+//                             "Date":"１６日",
+//                             "Term":"昼前"
+//                         }
+//                     }
+//                 }
+//             },
+//             {
+//                 "Name":"雷注意報",
+//                 "Code":"14",
+//                 "Status":"継続",
+//                 "Addition":{
+//                     "Note":"突風"
+//                 },
+//                 "Property":{
+//                     "Type":"雷",
+//                     "AdvisoryPeriod":{
+//                         "EndTime":{
+//                             "Date":"１６日",
+//                             "Term":"昼過ぎ"
+//                         }
+//                     }
+//                 }
+//             },
+//             {
+//                 "Name":"強風注意報",
+//                 "Code":"15",
+//                 "Status":"継続",
+//                 "Property":{
+//                     "Type":"風",
+//                     "AdvisoryPeriod":{
+//                         "ZoneTime":{
+//                             "Date":"１５日",
+//                             "Term":"夜のはじめ頃"
+//                         }
+//                     },
+//                     "WindDirectionPart":{
+//                         "Base":{
+//                             "WindDirection":{
+//                                 "value":"南",
+//                                 "description":"南の風",
+//                                 "type":"風向",
+//                                 "unit":"８方位漢字"
+//                             }
+//                         }
+//                     },
+//                     "WindSpeedPart":{
+//                         "Base":{
+//                             "Local":{
+//                                 "AreaName":"外海",
+//                                 "WindSpeed":{
+//                                     "value":"10",
+//                                     "description":"１０メートル",
+//                                     "type":"最大風速",
+//                                     "unit":"m/s"
+//                                 }
+//                             }
+//                         }
+//                     }
+//                 }
+//             },
+//             {
+//                 "Name":"波浪注意報",
+//                 "Code":"16",
+//                 "Status":"継続",
+//                 "Property":{
+//                     "Type":"波",
+//                     "AdvisoryPeriod":{
+//                         "ZoneTime":{
+//                             "Date":"１５日",
+//                             "Term":"夜のはじめ頃"
+//                         }
+//                     },
+//                     "WaveHeightPart":{
+//                         "Base":{
+//                             "Local":{
+//                                 "AreaName":"外海",
+//                                 "WaveHeight":{
+//                                     "value":"2.5",
+//                                     "description":"２．５メートル",
+//                                     "type":"波高",
+//                                     "unit":"m"
+//                                 }
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//         ],
+//         "Area":{
+//             "Name":"佐世保市（宇久地域を除く）",
+//             "Code":"4220201"
+//         },
+//         "ChangeStatus":"警報・注意報種別に変化無、量的予想事項等に変化有"
+//     };
+// var data2 = {
+//     "Kind":[{
+//     "Name":"大雨注意報",
+//     "Code":"10",
+//     "Status":"発表",
+//     "Attention":{
+//     "Note":"土砂災害注意"
+//     },
+//     "Property":{
+//     "Type":"土砂災害",
+//     "AdvisoryPeriod":{
+//     "EndTime":{
+//     "Date":"１５日",
+//     "Term":"夜遅く"
+//     }
+//     }
+//     }
+//     },
+//     {
+//     "Name":"雷注意報",
+//     "Code":"14",
+//     "Status":"継続",
+//     "Addition":{
+//     "Note":"突風"
+//     },
+//     "Property":{
+//     "Type":"雷",
+//     "AdvisoryPeriod":{
+//     "EndTime":{
+//     "Date":"１６日",
+//     "Term":"昼前"
+//     }
+//     }
+//     }
+//     },
+//     {
+//         "Name":"強風注意報",
+//         "Code":"15",
+//         "Status":"継続",
+//         "Property":{
+//             "Type":"風",
+//             "AdvisoryPeriod":{
+//                 "EndTime":{
+//                     "Date":"１６日",
+//                     "Term":"未明"
+//                 }
+//             },
+//             "PeakTime":{
+//                 "Date":"１５日",
+//                 "Term":"夜のはじめ頃"
+//             },
+//             "WindDirectionPart":{
+//                 "Base":{
+//                     "WindDirection":{
+//                         "value":"南",
+//                         "description":"南の風",
+//                         "type":"風向",
+//                         "unit":"８方位漢字"
+//                     }
+//                 }
+//             },
+//             "WindSpeedPart":{
+//                 "Base":{
+//                     "Local":[
+//                         {
+//                             "AreaName":"玄界灘",
+//                             "WindSpeed":{
+//                                 "value":"14",
+//                                 "description":"１４メートル",
+//                                 "type":"最大風速",
+//                                 "unit":"m/s"
+//                             }
+//                         },
+//                         {
+//                             "AreaName":"沖ノ島周辺",
+//                                 "WindSpeed":{
+//                                     "value":"14",
+//                                     "description":"１４メートル",
+//                                     "type":"最大風速",
+//                                     "unit":"m/s"
+//                             }
+//                         }
+//                     ]
+//                 }
+//             }
+//         }
+//     }],
+//     "Area":{
+//         "Name":"福岡市",
+//         "Code":"4013000"
+//     },
+//     "ChangeStatus":"警報・注意報種別に変化有"
+// }

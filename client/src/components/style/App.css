@@ -45,7 +45,8 @@
 }
 
 .canvas-menu {
-  background-color: #dfdfdf;
+  overflow: scroll;
+  background-color: #ffffff;
   top: 0;
   bottom: 0;
   width: 100%;
