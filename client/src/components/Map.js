@@ -177,11 +177,12 @@ class Map extends Component {
             var code = features[0].properties[code_prop];
             map.setFilter(layerId, ["==", code_prop, code]);
 
-            if (layer === 'pref'){
-                map.setFilter('selected-area-city', ["==", code_prop, code]);
-            } else {
-                map.setFilter('selected-area-pref', ["==", code_prop, code]);
-            }
+            // if (layer === 'pref'){
+            //     map.setFilter('selected-area-city', ["==", code_prop, code]);
+            // } else {
+            //     map.setFilter('selected-area-pref', ["==", code_prop, code]);
+            // }
+            map.setFilter('selected-area-pref', ["==", code_prop, code]);
             clickCity(features[0].properties, warning_data[layer][code]);
         }
 

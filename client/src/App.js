@@ -6,6 +6,7 @@ import Map from './components/Map.js';
 import Coodinate from './components/Coordinate.js';
 import WarningLabel from './components/WarningLabel.js';
 import WarnTextForm from './components/Form.js';
+import WarnPeriod from './components/WarnPeriod.js'
 
 
 class App extends Component{
@@ -72,6 +73,7 @@ class App extends Component{
             <Coodinate feature={this.state.feature} />
             <WarningLabel warnings={this.state.warn} />
             <WarnTextForm feature={this.state.feature} changeSelect={this.setCode.bind(this)} />
+            <WarnPeriod code={this.state.feature} />
           </OffCanvasMenu>
         </OffCanvas>
       </div>

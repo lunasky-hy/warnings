@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {get} from './Get.js';
-import WarnPeriod from './WarnPeriod.js'
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button'
 import DateFnsUtils from '@date-io/date-fns';
@@ -165,7 +164,6 @@ export default class WarnTextForm extends Component{
                     </div>
                 </form>
                 {/* <button onClick={() => console.log(this.state)}>console.log</button> */}
-                <WarnPeriod />
             </section>
         );
     }

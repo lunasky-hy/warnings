@@ -5,15 +5,23 @@ export default class WarnPeriod extends Component {
     constructor(props){
         super(props);
         this.state = {
+            code: null,
             start: {        // 情報の発表タイミング
-                date: 15,
-                term: 6     // 0:00-0, 3:00-1, 6:00:2, 9:3, 12:4, 15:5, 18:6, 21:7
+                date: 0,
+                term: 0     // 0:00-0, 3:00-1, 6:00:2, 9:3, 12:4, 15:5, 18:6, 21:7
             },
             end: {          // startから8ターム、24時間後まで
-                date: 16,
-                term: 5
+                date: 0,
+                term: 0
             }
         }
+    }
+
+    setCode(){
+        console.log(this.props);
+        // this.setState({
+        //     "code": this.props.code,
+        // });
     }
 
     CreateDays(){
@@ -40,8 +48,6 @@ export default class WarnPeriod extends Component {
     CreateTimes(){
         var time_colums = [<div className="datetime head" key="time">時間</div>];
         var term = this.state.start.term;
-
-        var columNum = 2;
 
         for(var i = 0; i < 8; i += 1){
             if(term > 7){
@@ -150,6 +156,13 @@ export default class WarnPeriod extends Component {
     }
 
     render(){
+        if(!this.state.code){
+            console.log(1)
+            return <div>地域を選択</div>;
+        }
+        console.log(2)
+        return <div>{this.props}</div>;
+
         var days = !data.Kind.length ? <div></div> : this.CreateDays()
         var times = !data.Kind.length ? <div>発令無し</div> : this.CreateTimes()
         var types = data.Kind.map(k => this.CreatePeriod(k));
