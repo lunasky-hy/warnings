@@ -12,16 +12,21 @@ export default class WarnPeriod extends Component {
             },              // startから8ターム、24時間後まで
             data: null,     //data,
             code: null,
+            error: false
         }
         this.callflag = false;
     }
 
-    setCode(code){
-        if(!code || code === this.state.code)
-            return;
-        this.setState({
-            "code": code,
-        });
+    // 開始日時の取得を行う関数の作成
+    getStartTime(){
+        //
+        //
+        //
+        //      書く
+        //
+        //
+        //
+
     }
 
     CreateDays(){
@@ -36,12 +41,12 @@ export default class WarnPeriod extends Component {
             if(term <= 8){
                 continue;
             }
-            day_colum.push(<div className="datetime middle" style={{"grid-column": columNum +"/"+ (i+2)}} key={day}>{day}日</div>);
+            day_colum.push(<div className="datetime middle" style={{"gridColumn": columNum +"/"+ (i+2)}} key={day}>{day}日</div>);
             term = 0;
             day += 1;
             columNum = i + 2;
         }
-        day_colum.push(<div className="datetime middle end" style={{"grid-column": columNum +"/"+ 10}} key={day}>{day}日</div>);
+        day_colum.push(<div className="datetime middle end" style={{"gridColumn": columNum +"/"+ 10}} key={day}>{day}日</div>);
         return <div className="grid">{day_colum}</div>
     }
 
@@ -161,30 +166,33 @@ export default class WarnPeriod extends Component {
             return <div>地域を選択</div>;
         }
 
-        console.log(this.props.code);
+        // console.log(this.props.code);
         var code = this.props.code.prefCode;
         if(!this.callflag && code !== this.state.code){
             this.callflag = true
             get("/api/period/" + code).then(res => res.json()).then(d => {
                 console.log(d);
-                this.setState({data: d[3]["Item"][0], code: this.props.code.prefCode})
+                this.setState({error: false, data: d[3]["Item"][2], code: this.props.code.prefCode})
             }).catch(err => {
                 console.log(err);
+                this.setState({error: true, data: {}, code: this.props.code.prefCode});
             }).finally(() => {
                 this.callflag = false;
             });
         }
 
         // waiting for get data
-        if(!this.state.data || !(!this.state.data.err)){    
+        if(!this.state.data){    
             return <div>Wait a moment.....</div>;
+        }
+        else if(this.state.error){
+            return <div>No Data or Network Error</div>;
         }
 
         // can get data
-        console.log(this.state.data)
-        var days = !this.state.data.Kind.length ? <div></div> : this.CreateDays()
-        var times = !this.state.data.Kind.length ? <div>発令無し</div> : this.CreateTimes()
-        var types = this.state.data.Kind.map(k => this.CreatePeriod(k));
+        var days = this.CreateDays();
+        var times = this.CreateTimes();
+        var types = !this.state.data.Kind.length ? this.CreatePeriod(this.state.data.Kind) : this.state.data.Kind.map(k => this.CreatePeriod(k));
         return (
             <div className="outline">
                 <div className="arealabel">{this.state.data.Area.Name} (code: {this.state.data.Area.Code})</div>
