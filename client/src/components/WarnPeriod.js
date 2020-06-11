@@ -1,32 +1,33 @@
 import React, { Component } from 'react';
 import './style/period.css';
-import {get} from './Get.js';
+import {get, WeatherXmlQueryOption, xmlSearch} from './Get.js';
+import { str2date } from './Datetime';
 
 export default class WarnPeriod extends Component {
     constructor(props){
         super(props);
         this.state = {
             start: {        // 情報の発表タイミング
-                date: 15,
+                date: 11,
                 term: 6     // 0:00-0, 3:00-1, 6:00:2, 9:3, 12:4, 15:5, 18:6, 21:7
             },              // startから8ターム、24時間後まで
-            data: null,     //data,
+            warning: null,     //data,
             code: null,
             error: false
         }
         this.callflag = false;
+        this.cache = {};
     }
 
     // 開始日時の取得を行う関数の作成
-    getStartTime(){
-        //
-        //
-        //
-        //      書く
-        //
-        //
-        //
-
+    getStartTime(date_str){
+        var time = str2date(date_str);
+        this.setState({
+            start: {
+                date: time.getDate(),
+                term: Math.floor(time.getHour / 3),
+            }
+        });
     }
 
     CreateDays(){
@@ -107,23 +108,25 @@ export default class WarnPeriod extends Component {
 
     convertDatetimeFormat(obj){
         return {
-            date: this.extractNumber(this.zenkaku2hankaku(obj.Date)),
-            term: this.term2number(obj.Term)
+            date: this.extractNumber(this.zenkaku2hankaku(obj.date)),
+            term: this.term2number(obj.term)
         };
     }
 
     CreatePeriod(type){
-        if (!(type.Property)) return;
+        console.log(type)
+        if (!(type.property)) return;
+        console.log(type)
         const colorClass = ["", "advisory", "warning", "emergency"];
         var mapping = [0, 0, 0, 0, 0, 0, 0, 0];
         var start, end;
 
-        if(!(!type.Property.WarningPeriod)) {
-            const period = type.Property.WarningPeriod;
-            start = !period.StartTime ? 0 : this.time2mappingIndex(period.StartTime);
-            end = !period.EndTime ? 7 : this.time2mappingIndex(period.EndTime);
-            if(!(!period.ZoneTime)) {
-                start = end = this.time2mappingIndex(period.ZoneTime);
+        if(!(!type.property.warningPeriod)) {
+            const period = type.property.warningPeriod;
+            start = !period.startTime ? 0 : this.time2mappingIndex(period.startTime);
+            end = !period.endTime ? 7 : this.time2mappingIndex(period.endTime);
+            if(!(!period.zoneTime)) {
+                start = end = this.time2mappingIndex(period.zoneTime);
             }
 
             for(var i = start; i <= end; i += 1){
@@ -131,11 +134,11 @@ export default class WarnPeriod extends Component {
             }
         }
 
-        if(!(!type.Property.AdvisoryPeriod)) {
-            const period = type.Property.AdvisoryPeriod;
-            start = !period.StartTime ? 0 : this.time2mappingIndex(period.StartTime);
-            end = !period.EndTime ? 7 : this.time2mappingIndex(period.EndTime);
-            if(!(!period.ZoneTime)) {
+        if(!(!type.property.advisoryPeriod)) {
+            const period = type.property.advisoryPeriod;
+            start = !period.startTime ? 0 : this.time2mappingIndex(period.startTime);
+            end = !period.endTime ? 7 : this.time2mappingIndex(period.endTime);
+            if(!(!period.zoneTime)) {
                 start = end = this.time2mappingIndex(period.ZoneTime);
             }
 
@@ -145,44 +148,88 @@ export default class WarnPeriod extends Component {
         }
 
         // マッピングをもとにタグ生成
-        var head = <div className={"item head " + this.whichTypeWarning(type.Name)}> {type["Name"]} </div>;
+        var head = <div className={"item head " + this.whichTypeWarning(type.name)}> {type.name} </div>;
         var colums = mapping.map((id, index) => {
             if(index === mapping.length - 1)
-                return <div className={"item end" + colorClass[id]} key={type.Name + index} value={id}></div>;
-            return <div className={"item " + colorClass[id]} key={type.Name + index} value={id}></div>;
+                return <div className={"item end" + colorClass[id]} key={type.name + index} value={id}></div>;
+            return <div className={"item " + colorClass[id]} key={type.name + index} value={id}></div>;
         });
 
         return (
-            <div className="grid" key={type.Name}>
+            <div className="grid" key={type.name}>
                     {head}
                     {colums}
             </div>
         );
     }
 
+    async downloadData(code){
+        if(code in this.cache){
+            this.setState({
+                error: false,
+                head: this.cache[code].report.head,
+                warning: this.cache[code].report.body.warning, 
+                code: code,
+            });
+            return;
+        }
+
+        this.callflag = true
+
+        // Generate Search Query
+        var opt = new WeatherXmlQueryOption();
+        var start = new Date();
+        start.setDate(start.getDate() - 2)
+        opt.setValues({
+            title: "気象特別警報・警報・注意報",
+            areacode: code,
+        });
+        opt.setDatetime(start, new Date);
+
+        // Search JMA-XML
+        var list = await xmlSearch(opt).then(res => res.json()).then(li => {
+            console.log(li);
+            return li;
+        });
+
+        if(list.data.length === 0){
+            this.callflag = false;
+            return;
+        };
+
+        // show JMA-XML
+        await get(list.data[0].link + ".json").then(res => res.json()).then(content => {
+            console.log(content);
+            this.cache[code] = content.report;
+            this.setState({
+                error: false,
+                head: content.report.head,
+                warning: content.report.body.warning, 
+                code: code,
+            });
+        }).catch(err => {
+            console.log(err);
+            this.setState({error: true, warning: {}, code: this.props.code.prefCode});
+        }).finally(() => {
+            this.callflag = false;
+        });
+    }
+
     render(){
+        // 地域が選択されていないとき
         if(!this.props.code){
             console.log("area none");
             return <div>地域を選択</div>;
         }
 
-        // console.log(this.props.code);
         var code = this.props.code.prefCode;
+        //　気象警報情報の取得
         if(!this.callflag && code !== this.state.code){
-            this.callflag = true
-            get("/api/period/" + code).then(res => res.json()).then(d => {
-                console.log(d);
-                this.setState({error: false, data: d[3]["Item"][2], code: this.props.code.prefCode})
-            }).catch(err => {
-                console.log(err);
-                this.setState({error: true, data: {}, code: this.props.code.prefCode});
-            }).finally(() => {
-                this.callflag = false;
-            });
+            this.downloadData(code);
         }
 
         // waiting for get data
-        if(!this.state.data){    
+        if(!this.state.warning){    
             return <div>Wait a moment.....</div>;
         }
         else if(this.state.error){
@@ -192,10 +239,12 @@ export default class WarnPeriod extends Component {
         // can get data
         var days = this.CreateDays();
         var times = this.CreateTimes();
-        var types = !this.state.data.Kind.length ? this.CreatePeriod(this.state.data.Kind) : this.state.data.Kind.map(k => this.CreatePeriod(k));
+        const target = this.state.warning[3].item[0];
+        console.log(target)
+        var types = target.kind.map(k => this.CreatePeriod(k));
         return (
             <div className="outline">
-                <div className="arealabel">{this.state.data.Area.Name} (code: {this.state.data.Area.Code})</div>
+                <div className="arealabel">{target.area.name} (code: {target.area.code})</div>
                 {days}
                 {times}
                 {types}
@@ -205,7 +254,7 @@ export default class WarnPeriod extends Component {
 }
 
 // var data = {
-//         "Kind": [
+//         "kind": [
 //             {
 //                 "Name":"大雨注意報",
 //                 "Code":"10",

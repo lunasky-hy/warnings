@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import mapboxgl from 'mapbox-gl';
-import {get} from './Get.js';
+// import {get} from './Get.js';
+import {get, getWarningArea} from './Get.js';
 import './style/map.css';
 
 class Map extends Component {
@@ -43,7 +44,8 @@ class Map extends Component {
             // mountLayer("city");
             
             get("/api/warning/pref").then(v => v.json()).then(v => {
-                renderWaringArea('pref', v);
+            // getWarningArea("pref").then(v => v.json()).then(v => {
+                    renderWaringArea('pref', v);
             });
             // get("/api/warning/city").then(v => v.json()).then(v => {
             //     renderWaringArea('city', v);

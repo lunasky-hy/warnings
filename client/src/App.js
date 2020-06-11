@@ -72,7 +72,7 @@ class App extends Component{
             <ArrowForwardIosIcon fontSize="large" onClick={()=>this.handleClick(false)} className={"canvas-back-icon"} />
             <Coodinate feature={this.state.feature} />
             <WarningLabel warnings={this.state.warn} />
-            <WarnTextForm feature={this.state.feature} changeSelect={this.setCode.bind(this)} />
+            {/* <WarnTextForm feature={this.state.feature} changeSelect={this.setCode.bind(this)} /> */}
             <WarnPeriod code={this.state.feature} />
           </OffCanvasMenu>
         </OffCanvas>
