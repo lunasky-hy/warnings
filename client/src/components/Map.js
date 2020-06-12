@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import mapboxgl from 'mapbox-gl';
 // import {get} from './Get.js';
-import {get, getWarningArea} from './Get.js';
+import {getWarningArea} from './Get.js';
 import './style/map.css';
 
 class Map extends Component {
@@ -15,7 +15,7 @@ class Map extends Component {
     }
 
     componentDidMount() {
-        const zoomThreshold = 6;
+        const zoomThreshold = 9;
 
         // マップの生成
         mapboxgl.accessToken = 'pk.eyJ1IjoibHVuYXNreSIsImEiOiJjazZidGtid2UxNTd1M2tuNTN0cDBzZDMyIn0.8ci4ul7Dh1kg2g6sRfDYQw';
@@ -43,8 +43,8 @@ class Map extends Component {
             mountLayer("pref");
             // mountLayer("city");
             
-            get("/api/warning/pref").then(v => v.json()).then(v => {
-            // getWarningArea("pref").then(v => v.json()).then(v => {
+            // get("/api/warning/pref").then(v => v.json()).then(v => {
+            getWarningArea("pref").then(v => v.json()).then(v => {
                     renderWaringArea('pref', v);
             });
             // get("/api/warning/city").then(v => v.json()).then(v => {
