@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './style/period.css';
 import {get, WeatherXmlQueryOption, xmlSearch} from './Get.js';
-import { str2date } from './Datetime';
+import { str2date, date2str_withformat } from './Datetime';
 
 export default class WarnPeriod extends Component {
     constructor(props){
@@ -261,17 +261,24 @@ export default class WarnPeriod extends Component {
             return <div style={{"marginTop": "1rem"}}>No Data or Network Error</div>;
         }
 
-        // can get data
+        // got data
         var days = this.CreateDays();
         var times = this.CreateTimes();
         const target = this.state.warning[3].item[0];
         var types = target.kind.map(k => this.CreatePeriod(k));
+
+        const reportTime = str2date(this.state.head.targetDateTime);
         return (
-            <div className="outline" style={{"marginTop": "1rem"}}>
-                <div className="arealabel">{target.area.name} (code: {target.area.code})</div>
-                {days}
-                {times}
-                {types}
+            <div style={{"margin": "2rem 1rem 10% 10%"}}>
+                <h4 style={{"textAlign": "left"}}><u>{this.state.head.title}</u></h4>
+                <p style={{"textAlign": "left"}}>{this.state.head.headline.text}</p>
+                <p style={{"textAlign": "right"}}>発表時刻：{date2str_withformat(reportTime, "YYYY/MM/DD hh:mm")}</p>
+                <div className="outline">
+                    <div className="arealabel">{target.area.name} (code: {target.area.code})</div>
+                    {days}
+                    {times}
+                    {types}
+                </div>
             </div>
         );
     }
