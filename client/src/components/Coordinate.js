@@ -15,7 +15,8 @@ export default function Coodinate(props){
     else {
         return (
             <div className="coodinate">
-                {feature.prefName}
+                {feature.prefName} 
+                <p style={{"fontSize": "small", marginTop: "0.5rem"}}>{feature.prefCode}</p>
             </div>
         );
     }
