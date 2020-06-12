@@ -57,6 +57,11 @@ app.get('/api/templete/:type', async (req, res) => {
   res.json(await templete);
 });
 
+app.get('/api/test', (req, res) => {
+  console.log("test");
+  res.json({test: "test"});
+})
+
 const path = require('path');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use((req, res) => {
