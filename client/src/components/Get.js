@@ -62,7 +62,6 @@ export class WeatherXmlQueryOption{
     }
 
     setDatetime(start, end){
-        console.log(typeof(start))
         const start_str = date2str(start);
         const end_str = date2str(end);
         this.timeOpt["datetime"] = [start_str, end_str];

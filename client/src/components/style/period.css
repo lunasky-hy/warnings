@@ -4,7 +4,7 @@
 }
 .grid {
     display: grid;
-    grid-template-columns: 12rem repeat(8, 1fr);
+    grid-template-columns: 12rem repeat(9, 1fr);
 }
 
 .arealabel {

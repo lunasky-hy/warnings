@@ -15,7 +15,7 @@ class Map extends Component {
     }
 
     componentDidMount() {
-        const zoomThreshold = 8;
+        const zoomThreshold = 6;
 
         // マップの生成
         mapboxgl.accessToken = 'pk.eyJ1IjoibHVuYXNreSIsImEiOiJjazZidGtid2UxNTd1M2tuNTN0cDBzZDMyIn0.8ci4ul7Dh1kg2g6sRfDYQw';
@@ -28,7 +28,7 @@ class Map extends Component {
             attributionControl: false,
             logoPosition: 'bottom-right',
             hash: true,
-            style: 'mapbox://styles/lunasky/ck6btz0rn0c6u1itduqjh60dd',
+            style: 'mapbox://styles/lunasky/ckbbbjs5v03aq1ipi2crj7ctd',
             localIdeographFontFamily: "'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', Meiryo, メイリオ, sans-serif",
         });
         map.touchZoomRotate.disableRotation();
@@ -48,14 +48,12 @@ class Map extends Component {
                     renderWaringArea('pref', v);
             });
             // get("/api/warning/city").then(v => v.json()).then(v => {
+            // getWarningArea("city").then(v => v.json()).then(v => {
             //     renderWaringArea('city', v);
             // });
 
             map.on('mousemove', hoverArea);
             map.on('click', selectArea);
-
-            // addSource("distlict");
-            // addSource("division");
             
             createSelectLayer();
         });
@@ -87,17 +85,6 @@ class Map extends Component {
         function mountLayer(layer){
             // Layer's item - pref > distlict > division > city
             var source_layer = ((layer === 'city') ? '' : layer) + 'allgeojson';
-
-            // map.addLayer({
-            //     "id": "area-" + layer,
-            //     "type": "fill",
-            //     "source": "vtile-" + layer,
-            //     "source-layer": source_layer,
-            //     "paint": {
-            //         "fill-color": "rgba(55, 55, 55, 0.4)",
-            //         "fill-outline-color": "rgba(113, 181, 153, 0.5)"
-            //     }
-            // });
 
             map.addLayer({
                 "id": "selected-area-" + layer,
@@ -190,35 +177,22 @@ class Map extends Component {
 
         function createSelectLayer(){
             // const layers = ["city", "division", "distlict", "pref"];
-            const layers = "pref";
-
-            map.addLayer({
-                "id": "featured-area-pref",
-                "type": "fill",
-                "source": "vtile-pref",
-                "source-layer": "prefallgeojson",
-                "paint": {
-                    "fill-color": "rgba(250,250,250,1)",
-                    "fill-outline-color": "rgba(250, 30, 30, 1)",
-                },
-                "filter": ["==", "code", ""],
+            const layers = ["pref"];
+            layers.reverse().map((layer) => {
+                var source_layer = ((layer === 'city') ? '' : layer) + 'allgeojson';
+                map.addLayer({
+                    "id": "featured-area-" + layer,
+                    "type": "fill",
+                    "source": "vtile-" + layer,
+                    "source-layer": source_layer,
+                    "paint": {
+                        "fill-color": "rgba(250,250,250,1)",
+                        "fill-outline-color": "rgba(250, 30, 30, 1)",
+                    },
+                    "filter": ["==", "code", ""],
+                });
+                return null;
             });
-            {// layers.reverse().map((layer) => {
-            //     var source_layer = ((layer === 'city') ? '' : layer) + 'allgeojson';
-            //     map.addLayer({
-            //         "id": "featured-area-" + layer,
-            //         "type": "fill",
-            //         "source": "vtile-" + layer,
-            //         "source-layer": source_layer,
-            //         "paint": {
-            //             "fill-color": "rgba(250,250,250,1)",
-            //             "fill-outline-color": "rgba(250, 30, 30, 1)",
-            //         },
-            //         "filter": ["==", "code", ""],
-            //     });
-            //     return null;
-            // });
-            };
         }
         
         this.map = map;
@@ -236,6 +210,7 @@ class Map extends Component {
         var filter = ["any", ["==", code_prop, ""]];
         props.code.map(c => {
             filter.push(["==", code_prop, c]);
+            return c;
         })
 
         this.map.setFilter(layerId, filter);

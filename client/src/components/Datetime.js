@@ -1,5 +1,4 @@
 export function date2str(date) {
-    console.log(typeof(date))
     var year_str = date.getFullYear();
     //月だけ+1すること
     var month_str = 1 + date.getMonth();
@@ -43,6 +42,6 @@ export function date2str_withformat(date, format) {
 };
 
 export function str2date(datestr){
-    var date = Date.parse(datestr);
-    return date;
+    var date = new Date(Date.parse(datestr));
+    return new Date(date);
 }

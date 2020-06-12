@@ -22,11 +22,9 @@ export default class WarnPeriod extends Component {
     // 開始日時の取得を行う関数の作成
     getStartTime(date_str){
         var time = str2date(date_str);
-        this.setState({
-            start: {
-                date: time.getDate(),
-                term: Math.floor(time.getHour / 3),
-            }
+        return ({
+            date: time.getDate(),
+            term: Math.floor(time.getHours() / 3),
         });
     }
 
@@ -37,7 +35,7 @@ export default class WarnPeriod extends Component {
         var term = this.state.start.term;
         var columNum = 2;
 
-        for(var i = 0; i < 8; i += 1){
+        for(var i = 0; i < 9; i += 1){
             term += 1;
             if(term <= 8){
                 continue;
@@ -47,7 +45,7 @@ export default class WarnPeriod extends Component {
             day += 1;
             columNum = i + 2;
         }
-        day_colum.push(<div className="datetime middle end" style={{"gridColumn": columNum +"/"+ 10}} key={day}>{day}日</div>);
+        day_colum.push(<div className="datetime middle end" style={{"gridColumn": columNum +"/"+ 11}} key={day}>{day}日</div>);
         return <div className="grid">{day_colum}</div>
     }
 
@@ -55,11 +53,11 @@ export default class WarnPeriod extends Component {
         var time_colums = [<div className="datetime head" key="time">時間</div>];
         var term = this.state.start.term;
 
-        for(var i = 0; i < 8; i += 1){
+        for(var i = 0; i < 9; i += 1){
             if(term > 7){
                 term = 0;
             }
-            if(i === 7)
+            if(i === 8)
                 time_colums.push(<div className="datetime end" key={i}>{term * 3} - {(term + 1) * 3}</div>);
             else
                 time_colums.push(<div className="datetime middle" key={i}>{term * 3} - {(term + 1) * 3}</div>);
@@ -102,7 +100,7 @@ export default class WarnPeriod extends Component {
     }
 
     term2number(str) {
-        const terms = {"未明":0, "明け方":1, "朝":2, "昼前":3, "昼過ぎ":4, "夕方":5, "夜の始め頃":6, "夜遅く":7};
+        const terms = {"未明":0, "明け方":1, "朝":2, "昼前":3, "昼過ぎ":4, "夕方":5, "夜のはじめ頃":6, "夜遅く":7};
         return !terms[str] ? 0 : terms[str];
     }
 
@@ -114,17 +112,39 @@ export default class WarnPeriod extends Component {
     }
 
     CreatePeriod(type){
-        console.log(type)
         if (!(type.property)) return;
-        console.log(type)
+        if (type.status === "解除") {
+            return (<div className="grid" key={type.name}>
+                <div className={"item head"}> {type.name} </div>
+                <div className={"item end"} style={{"gridColumn" : "2/11"}}>解除</div>
+            </div>);
+        }
+        if (type.status === "発表警報・注意報はなし"){
+            return (<div className="grid" key="none">
+                <div className={"item head"}> 発表無し </div>
+            </div>);
+        }
         const colorClass = ["", "advisory", "warning", "emergency"];
-        var mapping = [0, 0, 0, 0, 0, 0, 0, 0];
+        var mapping = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         var start, end;
 
-        if(!(!type.property.warningPeriod)) {
-            const period = type.property.warningPeriod;
+        if(!(!type.property[0].emergencyPeriod)) {
+            const period = type.property[0].emergencyPeriod;
             start = !period.startTime ? 0 : this.time2mappingIndex(period.startTime);
-            end = !period.endTime ? 7 : this.time2mappingIndex(period.endTime);
+            end = !period.endTime ? 8 : this.time2mappingIndex(period.endTime);
+            if(!(!period.zoneTime)) {
+                start = end = this.time2mappingIndex(period.zoneTime);
+            }
+
+            for(var i = start; i <= end; i += 1){
+                mapping[i] = mapping[i] > 3 ? mapping[i] : 3;
+            }
+        }
+
+        if(!(!type.property[0].warningPeriod)) {
+            const period = type.property[0].warningPeriod;
+            start = !period.startTime ? 0 : this.time2mappingIndex(period.startTime);
+            end = !period.endTime ? 8 : this.time2mappingIndex(period.endTime);
             if(!(!period.zoneTime)) {
                 start = end = this.time2mappingIndex(period.zoneTime);
             }
@@ -134,12 +154,12 @@ export default class WarnPeriod extends Component {
             }
         }
 
-        if(!(!type.property.advisoryPeriod)) {
-            const period = type.property.advisoryPeriod;
+        if(!(!type.property[0].advisoryPeriod)) {
+            const period = type.property[0].advisoryPeriod;
             start = !period.startTime ? 0 : this.time2mappingIndex(period.startTime);
-            end = !period.endTime ? 7 : this.time2mappingIndex(period.endTime);
+            end = !period.endTime ? 8 : this.time2mappingIndex(period.endTime);
             if(!(!period.zoneTime)) {
-                start = end = this.time2mappingIndex(period.ZoneTime);
+                start = end = this.time2mappingIndex(period.zoneTime);
             }
 
             for(i = start; i <= end; i += 1){
@@ -151,7 +171,7 @@ export default class WarnPeriod extends Component {
         var head = <div className={"item head " + this.whichTypeWarning(type.name)}> {type.name} </div>;
         var colums = mapping.map((id, index) => {
             if(index === mapping.length - 1)
-                return <div className={"item end" + colorClass[id]} key={type.name + index} value={id}></div>;
+                return <div className={"item end " + colorClass[id]} key={type.name + index} value={id}></div>;
             return <div className={"item " + colorClass[id]} key={type.name + index} value={id}></div>;
         });
 
@@ -163,12 +183,18 @@ export default class WarnPeriod extends Component {
         );
     }
 
+    shouldComponentUpdate(nextP, nextS){
+        return !(this.state.warning === nextS.warning &&
+            this.props.code === nextP.code);
+    }
+
     async downloadData(code){
         if(code in this.cache){
             this.setState({
                 error: false,
-                head: this.cache[code].report.head,
-                warning: this.cache[code].report.body.warning, 
+                head: this.cache[code].head,
+                start: this.getStartTime(this.cache[code].control.dateTime),
+                warning: this.cache[code].body.warning, 
                 code: code,
             });
             return;
@@ -184,13 +210,10 @@ export default class WarnPeriod extends Component {
             title: "気象特別警報・警報・注意報",
             areacode: code,
         });
-        opt.setDatetime(start, new Date);
+        opt.setDatetime(start, new Date());
 
         // Search JMA-XML
-        var list = await xmlSearch(opt).then(res => res.json()).then(li => {
-            console.log(li);
-            return li;
-        });
+        var list = await xmlSearch(opt).then(res => res.json());
 
         if(list.data.length === 0){
             this.callflag = false;
@@ -200,10 +223,12 @@ export default class WarnPeriod extends Component {
         // show JMA-XML
         await get(list.data[0].link + ".json").then(res => res.json()).then(content => {
             console.log(content);
+            console.log(this.getStartTime(content.report.control.dateTime))
             this.cache[code] = content.report;
             this.setState({
                 error: false,
                 head: content.report.head,
+                start: this.getStartTime(content.report.control.dateTime),
                 warning: content.report.body.warning, 
                 code: code,
             });
@@ -233,17 +258,16 @@ export default class WarnPeriod extends Component {
             return <div>Wait a moment.....</div>;
         }
         else if(this.state.error){
-            return <div>No Data or Network Error</div>;
+            return <div style={{"marginTop": "1rem"}}>No Data or Network Error</div>;
         }
 
         // can get data
         var days = this.CreateDays();
         var times = this.CreateTimes();
         const target = this.state.warning[3].item[0];
-        console.log(target)
         var types = target.kind.map(k => this.CreatePeriod(k));
         return (
-            <div className="outline">
+            <div className="outline" style={{"marginTop": "1rem"}}>
                 <div className="arealabel">{target.area.name} (code: {target.area.code})</div>
                 {days}
                 {times}

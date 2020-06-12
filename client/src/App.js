@@ -5,7 +5,7 @@ import './components/style/App.css';
 import Map from './components/Map.js';
 import Coodinate from './components/Coordinate.js';
 import WarningLabel from './components/WarningLabel.js';
-import WarnTextForm from './components/Form.js';
+// import WarnTextForm from './components/Form.js';
 import WarnPeriod from './components/WarnPeriod.js'
 
 
