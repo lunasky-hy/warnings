@@ -21,7 +21,7 @@ export async function getWarningArea(layer){
 }
 
 export async function xmlSearch(option){
-    const base = "http://api.aitc.jp/jmardb-api/search?";
+    const base = "//api.aitc.jp/jmardb-api/search?";
     const url = base + option.query();
     return await fetch(url).then(data => {
         return data;

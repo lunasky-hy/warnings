@@ -221,7 +221,8 @@ export default class WarnPeriod extends Component {
         };
 
         // show JMA-XML
-        await get(list.data[0].link + ".json").then(res => res.json()).then(content => {
+        var request = list.data[0].link + ".json";
+        await get(request.substring(5, request.length)).then(res => res.json()).then(content => {
             console.log(content);
             console.log(this.getStartTime(content.report.control.dateTime))
             this.cache[code] = content.report;
