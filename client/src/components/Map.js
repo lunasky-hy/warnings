@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import mapboxgl from 'mapbox-gl';
 // import {get} from './Get.js';
-import {getWarningArea} from './Get.js';
+import {getWarningArea} from './tools/Get.js';
 import './style/map.css';
 
 class Map extends Component {

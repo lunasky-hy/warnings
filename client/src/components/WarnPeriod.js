@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './style/period.css';
-import {get, WeatherXmlQueryOption, xmlSearch} from './Get.js';
-import { str2date, date2str_withformat } from './Datetime';
+import {get, WeatherXmlQueryOption, xmlSearch} from './tools/Get.js';
+import { str2date, date2str_withformat } from './tools/Datetime';
 
 export default class WarnPeriod extends Component {
     constructor(props){
