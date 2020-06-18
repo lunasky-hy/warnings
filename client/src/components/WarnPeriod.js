@@ -28,44 +28,6 @@ export default class WarnPeriod extends Component {
         });
     }
 
-    CreateDays(){
-        // var date_colums = <div className="item head"></div>
-        var day_colum = [<div className="datetime head" key="day">日付</div>];
-        var day = this.state.start.date;
-        var term = this.state.start.term;
-        var columNum = 2;
-
-        for(var i = 0; i < 9; i += 1){
-            term += 1;
-            if(term <= 8){
-                continue;
-            }
-            day_colum.push(<div className="datetime middle" style={{"gridColumn": columNum +"/"+ (i+2)}} key={day}>{day}日</div>);
-            term = 0;
-            day += 1;
-            columNum = i + 2;
-        }
-        day_colum.push(<div className="datetime middle end" style={{"gridColumn": columNum +"/"+ 11}} key={day}>{day}日</div>);
-        return <div className="grid">{day_colum}</div>
-    }
-
-    CreateTimes(){
-        var time_colums = [<div className="datetime head" key="time">時間</div>];
-        var term = this.state.start.term;
-
-        for(var i = 0; i < 9; i += 1){
-            if(term > 7){
-                term = 0;
-            }
-            if(i === 8)
-                time_colums.push(<div className="datetime end" key={i}>{term * 3} - {(term + 1) * 3}</div>);
-            else
-                time_colums.push(<div className="datetime middle" key={i}>{term * 3} - {(term + 1) * 3}</div>);
-            term += 1;
-        }
-        return <div className="grid">{time_colums}</div>;
-    }
-
     whichTypeWarning(w){
         if(w.lastIndexOf("特別警報") !== -1){
             return "emergency";
@@ -109,6 +71,43 @@ export default class WarnPeriod extends Component {
             date: this.extractNumber(this.zenkaku2hankaku(obj.date)),
             term: this.term2number(obj.term)
         };
+    }
+
+    CreateDays(){
+        var day_colum = [<div className="datetime head" key="day">日付</div>];
+        var day = this.state.start.date;
+        var term = this.state.start.term;
+        var columNum = 2;
+
+        for(var i = 0; i < 9; i += 1){
+            term += 1;
+            if(term <= 8){
+                continue;
+            }
+            day_colum.push(<div className="datetime middle" style={{"gridColumn": columNum +"/"+ (i+2)}} key={day}>{day}日</div>);
+            term = 0;
+            day += 1;
+            columNum = i + 2;
+        }
+        day_colum.push(<div className="datetime middle end" style={{"gridColumn": columNum +"/"+ 11}} key={day}>{day}日</div>);
+        return <div className="grid">{day_colum}</div>
+    }
+
+    CreateTimes(){
+        var time_colums = [<div className="datetime head" key="time">時間</div>];
+        var term = this.state.start.term;
+
+        for(var i = 0; i < 9; i += 1){
+            if(term > 7){
+                term = 0;
+            }
+            if(i === 8)
+                time_colums.push(<div className="datetime end" key={i}>{term * 3} - {(term + 1) * 3}</div>);
+            else
+                time_colums.push(<div className="datetime middle" key={i}>{term * 3} - {(term + 1) * 3}</div>);
+            term += 1;
+        }
+        return <div className="grid">{time_colums}</div>;
     }
 
     CreatePeriod(type){
@@ -241,6 +240,28 @@ export default class WarnPeriod extends Component {
         });
     }
 
+    renderFigure(code) {
+        var days = this.CreateDays();
+        var times = this.CreateTimes();
+        const target = this.state.warning[3].item[0];
+        var types = target.kind.map(k => this.CreatePeriod(k));
+
+        const reportTime = str2date(this.state.head.targetDateTime);
+        return (
+            <div style={{"margin": "2rem 1rem 10% 10%"}}>
+                <h4 style={{"textAlign": "left"}}><u>{this.state.head.title}</u></h4>
+                <p style={{"textAlign": "left"}}>{this.state.head.headline.text}</p>
+                <p style={{"textAlign": "right"}}>発表時刻：{date2str_withformat(reportTime, "YYYY/MM/DD hh:mm")}</p>
+                <div className="outline">
+                    <div className="arealabel">{target.area.name} (code: {target.area.code})</div>
+                    {days}
+                    {times}
+                    {types}
+                </div>
+            </div>
+        );
+    }
+
     render(){
         // 地域が選択されていないとき
         if(!this.props.code){
@@ -261,27 +282,11 @@ export default class WarnPeriod extends Component {
         else if(this.state.error){
             return <div style={{"marginTop": "1rem"}}>No Data or Network Error</div>;
         }
+        else{
+            return this.renderFigure(code)
+        }
 
         // got data
-        var days = this.CreateDays();
-        var times = this.CreateTimes();
-        const target = this.state.warning[3].item[0];
-        var types = target.kind.map(k => this.CreatePeriod(k));
-
-        const reportTime = str2date(this.state.head.targetDateTime);
-        return (
-            <div style={{"margin": "2rem 1rem 10% 10%"}}>
-                <h4 style={{"textAlign": "left"}}><u>{this.state.head.title}</u></h4>
-                <p style={{"textAlign": "left"}}>{this.state.head.headline.text}</p>
-                <p style={{"textAlign": "right"}}>発表時刻：{date2str_withformat(reportTime, "YYYY/MM/DD hh:mm")}</p>
-                <div className="outline">
-                    <div className="arealabel">{target.area.name} (code: {target.area.code})</div>
-                    {days}
-                    {times}
-                    {types}
-                </div>
-            </div>
-        );
     }
 }
 
