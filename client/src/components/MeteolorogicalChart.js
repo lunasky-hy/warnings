@@ -1,4 +1,4 @@
-import {get} from 'Get.js';
+import {get} from './tools/Get.js';
 // var map = new mapboxgl.Map({
 //     container: 'map',
 //     center: [136.6, 35],

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import mapboxgl from 'mapbox-gl';
 // import {get} from './Get.js';
-import {getWarningArea} from './Get.js';
+import {getWarningArea} from './tools/Get.js';
 import './style/map.css';
 
 class Map extends Component {
@@ -15,7 +15,7 @@ class Map extends Component {
     }
 
     componentDidMount() {
-        const zoomThreshold = 9;
+        const zoomThreshold = 6;
 
         // マップの生成
         mapboxgl.accessToken = 'pk.eyJ1IjoibHVuYXNreSIsImEiOiJjazZidGtid2UxNTd1M2tuNTN0cDBzZDMyIn0.8ci4ul7Dh1kg2g6sRfDYQw';
@@ -38,24 +38,24 @@ class Map extends Component {
         // レイヤーの生成
         map.on('load', () => {
             addSource("pref");
-            // addSource("city");
+            addSource("city");
 
             mountLayer("pref");
-            // mountLayer("city");
+            mountLayer("city");
             
             // get("/api/warning/pref").then(v => v.json()).then(v => {
             getWarningArea("pref").then(v => v.json()).then(v => {
                     renderWaringArea('pref', v);
             });
             // get("/api/warning/city").then(v => v.json()).then(v => {
-            // getWarningArea("city").then(v => v.json()).then(v => {
-            //     renderWaringArea('city', v);
-            // });
+            getWarningArea("city").then(v => v.json()).then(v => {
+                renderWaringArea('city', v);
+            });
 
             map.on('mousemove', hoverArea);
             map.on('click', selectArea);
             
-            createSelectLayer();
+            // createSelectLayer();
         });
 
         // マウスオーバー時の名前を表示
@@ -166,11 +166,11 @@ class Map extends Component {
             var code = features[0].properties[code_prop];
             map.setFilter(layerId, ["==", code_prop, code]);
 
-            // if (layer === 'pref'){
-            //     map.setFilter('selected-area-city', ["==", code_prop, code]);
-            // } else {
-            //     map.setFilter('selected-area-pref', ["==", code_prop, code]);
-            // }
+            if (layer === 'pref'){
+                map.setFilter('selected-area-city', ["==", code_prop, code]);
+            } else {
+                map.setFilter('selected-area-pref', ["==", code_prop, code]);
+            }
             map.setFilter('selected-area-pref', ["==", code_prop, code]);
             clickCity(features[0].properties, warning_data[layer][code]);
         }
