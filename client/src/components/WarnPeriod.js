@@ -73,6 +73,23 @@ export default class WarnPeriod extends Component {
         };
     }
 
+    mappingPeriod(elem, mapping, num, property){
+        var start, end;
+        if(!(!property[elem])) {
+            const period = property[elem];
+            start = !period.startTime ? 0 : this.time2mappingIndex(period.startTime);
+            end = !period.endTime ? 8 : this.time2mappingIndex(period.endTime);
+            if(!(!period.zoneTime)) {
+                start = end = this.time2mappingIndex(period.zoneTime);
+            }
+
+            for(var i = start; i <= end; i += 1){
+                mapping[i] = mapping[i] > num ? mapping[i] : num;
+            }
+        }
+        return mapping;
+    }
+
     CreateDays(){
         var day_colum = [<div className="datetime head" key="day">日付</div>];
         var day = this.state.start.date;
@@ -123,61 +140,30 @@ export default class WarnPeriod extends Component {
                 <div className={"item head"}> 発表無し </div>
             </div>);
         }
-        const colorClass = ["", "advisory", "warning", "emergency"];
-        var mapping = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-        var start, end;
 
-        if(!(!type.property[0].emergencyPeriod)) {
-            const period = type.property[0].emergencyPeriod;
-            start = !period.startTime ? 0 : this.time2mappingIndex(period.startTime);
-            end = !period.endTime ? 8 : this.time2mappingIndex(period.endTime);
-            if(!(!period.zoneTime)) {
-                start = end = this.time2mappingIndex(period.zoneTime);
-            }
+        var tag = type.property.map((property, index) => {
+            const colorClass = ["", "advisory", "warning", "emergency"];
+            var mapping = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    
+            mapping = this.mappingPeriod("emergencyPeriod", mapping, 3, property);
+            mapping = this.mappingPeriod("warningPeriod", mapping, 2, property);
+            mapping = this.mappingPeriod("advisoryPeriod", mapping, 1, property);
+            
+            var detail = property.type;
+            // マッピングをもとにタグ生成
+            var head = <div className={"item head " + this.whichTypeWarning(type.name)}> {type.name} ({detail})</div>;
+            var colums = mapping.map((id, index) => {
+                if(index === mapping.length - 1)
+                    return <div className={"item end " + colorClass[id]} key={type.name + index} value={id}></div>;
+                return <div className={"item " + colorClass[id]} key={type.name + index} value={id}></div>;
+            });
 
-            for(var i = start; i <= end; i += 1){
-                mapping[i] = mapping[i] > 3 ? mapping[i] : 3;
-            }
-        }
-
-        if(!(!type.property[0].warningPeriod)) {
-            const period = type.property[0].warningPeriod;
-            start = !period.startTime ? 0 : this.time2mappingIndex(period.startTime);
-            end = !period.endTime ? 8 : this.time2mappingIndex(period.endTime);
-            if(!(!period.zoneTime)) {
-                start = end = this.time2mappingIndex(period.zoneTime);
-            }
-
-            for(var i = start; i <= end; i += 1){
-                mapping[i] = mapping[i] > 2 ? mapping[i] : 2;
-            }
-        }
-
-        if(!(!type.property[0].advisoryPeriod)) {
-            const period = type.property[0].advisoryPeriod;
-            start = !period.startTime ? 0 : this.time2mappingIndex(period.startTime);
-            end = !period.endTime ? 8 : this.time2mappingIndex(period.endTime);
-            if(!(!period.zoneTime)) {
-                start = end = this.time2mappingIndex(period.zoneTime);
-            }
-
-            for(i = start; i <= end; i += 1){
-                mapping[i] = mapping[i] > 1 ? mapping[i] : 1;
-            }
-        }
-
-        // マッピングをもとにタグ生成
-        var head = <div className={"item head " + this.whichTypeWarning(type.name)}> {type.name} </div>;
-        var colums = mapping.map((id, index) => {
-            if(index === mapping.length - 1)
-                return <div className={"item end " + colorClass[id]} key={type.name + index} value={id}></div>;
-            return <div className={"item " + colorClass[id]} key={type.name + index} value={id}></div>;
-        });
+            return <div className="grid" key={type.name + index}>{head}{colums}</div>;
+        })
 
         return (
-            <div className="grid" key={type.name}>
-                    {head}
-                    {colums}
+            <div key={type.name}>
+                {tag}
             </div>
         );
     }
@@ -240,10 +226,18 @@ export default class WarnPeriod extends Component {
         });
     }
 
-    renderFigure(code) {
+    renderFigure() {
         var days = this.CreateDays();
         var times = this.CreateTimes();
-        const target = this.state.warning[3].item[0];
+        var target = this.state.warning[3].item[0];
+        if(!!this.props.code.code){
+            for(var index = 0; index < this.state.warning[3].item.length; index += 1){
+                if(this.props.code.code === this.state.warning[3].item[index].area.code){
+                    target = this.state.warning[3].item[index];
+                    break;
+                }
+            }
+        }
         var types = target.kind.map(k => this.CreatePeriod(k));
 
         const reportTime = str2date(this.state.head.targetDateTime);
@@ -285,8 +279,6 @@ export default class WarnPeriod extends Component {
         else{
             return this.renderFigure(code)
         }
-
-        // got data
     }
 }
 
