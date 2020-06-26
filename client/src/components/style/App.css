@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  font-family: "Montserrat","游ゴシック","YuGothic","ヒラギノ角ゴ ProN W3","Hiragino Kaku Gothic ProN","メイリオ",Meiryo,sans-serif;
+
 }
 
 .App-logo {
@@ -46,22 +48,25 @@
 
 .canvas-menu {
   overflow: scroll;
-  background-color: #ffffff;
+  background-color: rgba(21,21,21);
   top: 0;
   bottom: 0;
   width: 100%;
+  text-align: left;
+  padding-left: 1.5rem;
 }
 
 .canvas-back-icon {
   display: inline-block;
   position: absolute;
-  margin-top: 16px;
-  margin-left: -45%;
+  margin-top: 2rem;
+  margin-left: 1rem;
   padding: 3px;
   height: auto;
   width: auto;
-  border: solid 2px navy;
+  border: solid 2px rgba(21,21,21);
   border-radius: 50%;
+  color: #fff;
 }
 
 .back-icon-circle {
