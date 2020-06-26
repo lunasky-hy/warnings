@@ -92,8 +92,8 @@ class Map extends Component {
                 "source": "vtile-" + layer,
                 "source-layer": source_layer,
                 "paint": {
-                    "fill-color": "rgba(255, 55, 55, 1)",
-                    "fill-outline-color": "rgba(244, 244, 244, 1)",
+                    "fill-color": "rgba(0, 0, 0, 0)",
+                    "fill-outline-color": "rgba(244, 44, 44, 1)",
                 },
                 "filter": ["==", "code", ""],
             });
@@ -107,7 +107,7 @@ class Map extends Component {
             var warningColor = {
                 none:      "rgba(55, 55, 55, 1)",
                 advisory:  "rgba(254, 242, 99, 1)",
-                warning:   "rgba(233, 84, 107, 1)",
+                warning:   "rgb(191, 13, 13)",
                 emergency: "rgba(98, 68, 152, 1)"
             };
             warning_data[layer] = data[layer + 'list'];
