@@ -1,8 +1,9 @@
 .coodinate {
-    margin-top: 16px;
-    color: #292929;
-    padding: 8px;
-    font-size: x-large;
-    text-decoration: underline;
+    margin-top: 2rem;
+    margin-left: 5rem;
+    color: rgba(241,241,241);
+    padding-top: 0.5rem;
+    font-size: 2rem;
+    letter-spacing: 0.1rem;
     /* font-weight: bold; */
 }

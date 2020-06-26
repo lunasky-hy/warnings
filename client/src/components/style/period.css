@@ -1,14 +1,45 @@
 .outline {
-    border: 2px solid rgb(60,60,60);
-    border-bottom: 1px solid rgb(60, 60, 60);
+    border: 2px solid rgb(100, 100, 100);
+    border-bottom: 1px solid rgb(100, 100, 100);
 }
+
+.period-area {
+    margin-top: 2rem;
+    margin-left: 5rem;
+    margin-right: 2rem;
+}
+
 .grid {
     display: grid;
     grid-template-columns: 12rem repeat(9, 1fr);
 }
 
+.warning-text {
+    color: rgb(220, 220, 220);
+    padding-bottom: 1rem;
+}
+
+.warning-text > .head {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #fff;
+    letter-spacing: 0.1rem;
+}
+
+.warning-text > .body {
+    font-size: medium;
+    letter-spacing: 0.1rem;
+}
+
+.warning-text > .reporttime {
+    text-align: right;
+    font-size: medium;
+}
+
 .arealabel {
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid rgb(100, 100, 100);
+    text-align: center;
+    color: rgb(220, 220, 220);
 }
 
 .datetime {
@@ -16,10 +47,11 @@
     justify-content: center;
     align-items: center;
     height: 2rem;
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid rgb(100, 100, 100);
+    color: rgb(220, 220, 220);
 }
 .middle {
-    border-right: 2px dotted black;
+    border-right: 2px dotted rgb(100, 100, 100);
 }
 
 .item {
@@ -27,12 +59,14 @@
     justify-content: center;
     align-items: center;
     height: 4rem;
-    border-right: 2px dotted black;
-    border-bottom: 1px solid gray;
+    border-right: 2px dotted rgb(100, 100, 100);
+    border-bottom: 1px solid rgb(100, 100, 100);
+    font-size: 1rem;
+    font-weight: bolder;
 }
 
 .head {
-    border-right: 2px solid black;
+    border-right: 2px solid rgb(100, 100, 100);
 }
 
 .end {
@@ -46,7 +80,7 @@
 
 .item > .warning {
     color: white;
-    background-color: rgb(233, 84, 107);
+    background-color: rgb(191, 13, 13);
 }
 
 .item > .emergency {
