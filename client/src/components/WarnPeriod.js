@@ -131,8 +131,8 @@ export default class WarnPeriod extends Component {
         if (!(type.property)) return;
         if (type.status === "解除") {
             return (<div className="grid" key={type.name}>
-                <div className={"item head"}> {type.name} </div>
-                <div className={"item end"} style={{"gridColumn" : "2/11"}}>解除</div>
+                {/* <div className={"item head"}> {type.name} </div>
+                <div className={"item end"} style={{"gridColumn" : "2/11"}}>解除</div> */}
             </div>);
         }
         if (type.status === "発表警報・注意報はなし"){
