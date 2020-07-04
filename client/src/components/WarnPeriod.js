@@ -145,8 +145,12 @@ export default class WarnPeriod extends Component {
             const colorClass = ["", "advisory", "warning", "emergency"];
             var mapping = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     
-            mapping = this.mappingPeriod("emergencyPeriod", mapping, 3, property);
-            mapping = this.mappingPeriod("warningPeriod", mapping, 2, property);
+            if(this.whichTypeWarning(type.name) === "emergency" && type.condition.indexOf(property.type) >= 0 ){
+                mapping = this.mappingPeriod("warningPeriod", mapping, 3, property);
+            }
+            else{
+                mapping = this.mappingPeriod("warningPeriod", mapping, 2, property);
+            }
             mapping = this.mappingPeriod("advisoryPeriod", mapping, 1, property);
             
             var detail = property.type;
