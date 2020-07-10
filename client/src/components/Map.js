@@ -15,16 +15,16 @@ class Map extends Component {
     }
 
     componentDidMount() {
-        const zoomThreshold = 6;
+        const zoomThreshold = 5;
 
         // マップの生成
         mapboxgl.accessToken = 'pk.eyJ1IjoibHVuYXNreSIsImEiOiJjazZidGtid2UxNTd1M2tuNTN0cDBzZDMyIn0.8ci4ul7Dh1kg2g6sRfDYQw';
         var map = new mapboxgl.Map({
             container: this.container,
             center: [136.6, 35],
-            minZoom: 4,
+            minZoom: 5,
             maxZoom: 10,
-            zoom: 5,
+            zoom: 6,
             attributionControl: false,
             logoPosition: 'bottom-right',
             hash: true,
@@ -37,16 +37,16 @@ class Map extends Component {
 
         // レイヤーの生成
         map.on('load', () => {
-            addSource("pref");
+            // addSource("pref");
             addSource("city");
 
-            mountLayer("pref");
+            // mountLayer("pref");
             mountLayer("city");
             
             // get("/api/warning/pref").then(v => v.json()).then(v => {
-            getWarningArea("pref").then(v => v.json()).then(v => {
-                    renderWaringArea('pref', v);
-            });
+            // getWarningArea("pref").then(v => v.json()).then(v => {
+            //         renderWaringArea('pref', v);
+            // });
             // get("/api/warning/city").then(v => v.json()).then(v => {
             getWarningArea("city").then(v => v.json()).then(v => {
                 renderWaringArea('city', v);

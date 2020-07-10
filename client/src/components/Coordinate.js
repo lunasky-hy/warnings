@@ -8,7 +8,7 @@ export default function Coodinate(props){
     if (Object.keys(feature).length > 2){
         return (
             <div className="coodinate">
-                {feature.prefName} → {feature.distlictName} → {feature.divisionName} → {feature.name}
+                {feature.prefName} {feature.name}
             </div>
         );
     } 
